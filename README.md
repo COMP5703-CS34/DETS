@@ -18,9 +18,9 @@ Testing environment:
 ## Getting Started
 
 ### Prerequisites
-Java: 11
-Python: 2
-node.js v15.14.0
+Java: 11  
+Python: 2  
+node.js v15.14.0  
 npm 7.7.6
 ```
 curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash –
