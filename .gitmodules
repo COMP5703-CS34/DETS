@@ -1,0 +1,3 @@
+[submodule "chaincode"]
+	path = chaincode
+	url = https://github.com/COMP5703-CS34/minifab-elec.git
