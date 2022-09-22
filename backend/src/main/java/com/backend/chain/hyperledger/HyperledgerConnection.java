@@ -1,5 +1,7 @@
 package com.backend.chain.hyperledger;
 
+import org.hyperledger.fabric.chaincode.Account;
+import com.backend.chain.utility.Utility;
 import org.hyperledger.fabric.gateway.*;
 
 import java.nio.file.Path;
@@ -27,12 +29,11 @@ public class HyperledgerConnection {
                 contract = network.getContract("elec-chaincode");
 
                 byte[] bytes = contract.evaluateTransaction("query", "Plant");
-                System.out.println("After doing query");
-                System.out.println(new String(bytes));
+                Account user = (Account)Utility.toObject(bytes);
+                System.out.printf("Account:%s Elec:%d balance:%d\n", user.getAccountId(), user.getElecAmount(), user.getBalance());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
         return contract;
     }

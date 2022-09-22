@@ -20,7 +20,7 @@ public class HyperledgerEnrollAdmin {
     public static void enrollAdmin() throws Exception {
         Properties props = new Properties();
         props.put("pemFile",
-                "backend/src/main/resources/peerOrganizations/stateA.elec.com/ca/ca1.stateA.elec.com-cert.pem");
+                "chaincode/vars/keyfiles/peerOrganizations/stateA.elec.com/ca/ca1.stateA.elec.com-cert.pem");
         props.put("allowAllHostNames", "true");
         HFCAClient caClient = HFCAClient.createNewInstance("https://172.16.123.132:7000", props);
         CryptoSuite cryptoSuite = CryptoSuiteFactory.getDefault().getCryptoSuite();
