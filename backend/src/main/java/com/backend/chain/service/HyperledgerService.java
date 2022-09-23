@@ -16,13 +16,16 @@ import org.springframework.stereotype.Service;
 public class HyperledgerService {
     private static final Contract contract = HyperledgerConnection.getInstance();
 
-    public void getUserInfo(String name) {
+    public byte[] getUserInfo(String name) {
+        byte[] bytes = null;
         try {
-            byte[] bytes = contract.evaluateTransaction("query", name);
+            bytes = contract.evaluateTransaction("query", name);
             //输出测试结果
-            System.out.println(new String(bytes));
+
         } catch (ContractException e) {
             e.printStackTrace();
         }
+
+        return bytes;
     }
 }
