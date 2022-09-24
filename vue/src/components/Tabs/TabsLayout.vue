@@ -2,10 +2,10 @@
     <div>
         <div class="nav-tabs-navigation">
             <div class="nav-tabs-wrapper">
-                <slot name="nav"></slot>
+                <slot class="nav" name="nav"></slot>
             </div>
         </div>
-        <div>
+        <div class="content">
             <slot name="content"></slot>
         </div>
     </div>
@@ -16,3 +16,9 @@ export default {
   name: "tabs-layout"
 };
 </script>
+
+<style>
+    .tab-content{
+        margin-top: 12px;
+    }
+</style>

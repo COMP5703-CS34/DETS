@@ -1,7 +1,7 @@
 <template>
   <component :is="layoutComponent">
     <template slot="nav">
-      <div class="nav-wrapper">
+      <div class="row row-grid justify-content-center nav-wrapper">
         <ul class="nav"
             role="tablist"
             :class="
@@ -15,7 +15,7 @@
             ]">
 
           <li v-for="tab in tabs"
-              class="nav-item"
+              class="col-lg-10 nav-item"
               :key="tab.id || tab.title">
 
             <a data-toggle="tab"
@@ -34,7 +34,7 @@
         </ul>
       </div>
     </template>
-    <div slot="content" class="tab-content"
+    <div slot="content" class="col-lg-10 tab-content"
          :class="[tabContentClasses]">
       <slot v-bind="slotData"></slot>
     </div>
@@ -196,3 +196,10 @@ export default {
   }
 };
 </script>
+
+<style>
+  .nav-item{
+    margin-bottom: 3px;
+  }
+
+</style>
