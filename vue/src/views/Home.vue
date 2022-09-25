@@ -1,13 +1,34 @@
 <template>
   <div>
-    <div>
-      <h1 class="display-3  title">Distributed Electricity Transaction Platform</h1>
+    <div id = "head">
+      <div id = "leftTitle">
+        <h1 class="display-3  title">Distributed Electricity Transaction Platform</h1>
+      </div>
+      <div id = "rightInfo">
+        <p>Account ID: {{this.userInfo.accountId | nullValue}}</p>
+        <p>Electricity Amount: {{this.userInfo.elecAmount | nullValue}}</p>
+        <p>Balance: {{this.userInfo.balance | nullValue}}</p>
+      </div>
     </div>
     <div>
       <tabs fill class="container d-flex">
         <card shadow>
             <tab-pane title="User Infomation">
-                <button>uu</button>
+              <div class="modal-body">
+                <md-content md-dynamic-height md-alignment-top-center>
+                  <p>
+                    please input the quantity you want:
+                  </p>
+                </md-content>
+                <!-- messageClass is to show if there is invalid input -->
+                <!-- md-field :class="messageClass" > 
+                  <!- inputQuantity is to monitor input validation -->
+                  <input v-model="inName">
+                  <!-- show error hint if there is one, judge by disable.value -->
+                  <!-- md-content class="md-error" v-if="disabled.value" v-model="error.message">{{error.message}}</!-->
+                
+              </div>
+              <button class="md-primary" @click="QueryTest">Query</button>
             </tab-pane>
 
             <tab-pane title="Transaction">
@@ -39,28 +60,62 @@
     },
     data() {
       return {
-          line: null
-      }
+          userInfo: {
+            accountId: null,
+            elecAmount: null,
+            balance: null
+          },
+          queryName: "Home",
+          inName: null
+        }
     },
     created() {
-      this.test();
+      this.getUserInfo();
     },
-
+    filters: {
+      nullValue(str) {
+        return str || "Null";
+      }
+    },
     methods: {
-      test() {
-        this.$axios({
+      async getUserInfo(name = this.queryName) {
+        name = String(name)
+        await this.$axios({
           method: "get",
-          url: "/test"
-        }).then((resp) => {
+          //url: `/test`
+          url: `/userInfo/${name}`
+        })
+          .then((resp) => {
           console.log(resp)
-          this.line= resp.data.msg + "\n" +resp.data.page;
+          this.userInfo= resp.data.result;
         })
       },
+      QueryTest() {
+        this.getUserInfo(this.inName)
+      }
     },
   };
 </script>
 
 <style>
+  #head{
+    display: flex;
+    justify-content: space-between;
+    height: fit-content;
+  }
+  #leftTitle{
+    width: 70%;
+    display: flex;
+    justify-content: center;
+  }
+  #rightInfo{
+    margin-top: 5%;
+    margin-right: 60px;
+    width: 30%;
+    float: left;
+    padding-left: 8%;
+    text-align: right;
+  }
   .title{
     margin-top: 30px;
     margin-left: 60px;
