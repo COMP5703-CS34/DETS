@@ -17,7 +17,7 @@
               <div class="modal-body">
                 <md-content md-dynamic-height md-alignment-top-center>
                   <p>
-                    please input the quantity you want:
+                    please input the account name you want:
                   </p>
                 </md-content>
                 <!-- messageClass is to show if there is invalid input -->
@@ -29,6 +29,36 @@
                 
               </div>
               <button class="md-primary" @click="QueryTest">Query</button>
+              <div class="modal-body">
+                <md-content md-dynamic-height md-alignment-top-center>
+                  <p>
+                    please input the transaction Info you want:
+                  </p>
+                </md-content>
+                <!-- messageClass is to show if there is invalid input -->
+                <!-- md-field :class="messageClass" > 
+                  <!- inputQuantity is to monitor input validation -->
+                  <div class = "inputDiv">
+                    <p>From: </p>
+                    <input class="tans" v-model="transactionInfo.fromAccount" placeholder="fromAccount">
+                  </div>
+                  <div class = "inputDiv">
+                    <p>To </p>
+                    <input class="tans" v-model="transactionInfo.toAccount" placeholder="toAccount">
+                  </div>
+                  <div class = "inputDiv">
+                    <p>elecAmount: </p>
+                    <input class="tans" v-model="transactionInfo.elecAmount" placeholder="elecAmount">
+                  </div>
+                  <div class = "inputDiv">
+                    <p>elecPrice: </p>
+                    <input class="tans" v-model="transactionInfo.elecPrice" placeholder="elecPrice">
+                  </div>
+                  <!-- show error hint if there is one, judge by disable.value -->
+                  <!-- md-content class="md-error" v-if="disabled.value" v-model="error.message">{{error.message}}</!-->
+                
+              </div>
+              <button class="md-primary" @click="TransactionTest">Transaction</button>
             </tab-pane>
 
             <tab-pane title="Transaction">
@@ -66,7 +96,13 @@
             balance: null
           },
           queryName: "Home",
-          inName: null
+          inName: null,
+          transactionInfo: {
+            toAccount: null,
+            fromAccount: null, 
+            elecAmount: null, 
+            elecPrice: null
+          }
         }
     },
     created() {
@@ -84,14 +120,27 @@
           method: "get",
           //url: `/test`
           url: `/userInfo/${name}`
-        })
-          .then((resp) => {
+        }).then((resp) => {
           console.log(resp)
           this.userInfo= resp.data.result;
         })
       },
       QueryTest() {
         this.getUserInfo(this.inName)
+      },
+      TransactionTest() {
+        this.$axios({
+          method: "post",
+          url: `/doTransaction`,
+          params: {
+            fromAccount: this.transactionInfo.fromAccount,
+            toAccount: this.transactionInfo.toAccount,
+            elecAmount: this.transactionInfo.elecAmount,
+            elecPrice: this.transactionInfo.elecPrice
+          }
+        }).then((resp) => {
+          console.log(resp)
+        })
       }
     },
   };
@@ -112,7 +161,7 @@
     margin-top: 5%;
     margin-right: 60px;
     width: 30%;
-    float: left;
+    float: right;
     padding-left: 8%;
     text-align: right;
   }
@@ -124,5 +173,15 @@
   }
   .container{
     min-width: 85%;
+  }
+  .inputDiv{
+    display: flex;
+    justify-content: space-between;
+    width: 40%;
+  }
+  .trans{
+    width: 70%;
+    float: right;
+    justify-content: end;
   }
 </style>
