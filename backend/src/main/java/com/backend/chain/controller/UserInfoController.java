@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.json.JsonObject;
+
 /**
  * User Information Controller
  *
@@ -29,6 +31,7 @@ public class UserInfoController {
     public Response getUserInfo(@PathVariable("name") String name) {
         byte[] bytes = hyperledgerService.getUserInfo(name);
         Account resAccount = (Account) Utility.toObject(bytes);
+
         return ResponseFactory.buildSuccessResult(resAccount);
     }
 }
