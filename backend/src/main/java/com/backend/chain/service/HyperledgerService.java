@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class HyperledgerService {
     private static final Contract contract = HyperledgerConnection.getInstance();
-    private static final String failureWarning = "No Such object!";
+    private static final String NO_OBJECT_WARNING = "No Such object!";
 
     public byte[] getUserInfo(String name) {
-        byte[] bytes = failureWarning.getBytes();
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
         if (name == null) return bytes;
         try {
             bytes = contract.evaluateTransaction("query", name);
@@ -35,11 +35,17 @@ public class HyperledgerService {
         byte[] bytes = null;
         try {
             bytes = contract.evaluateTransaction("queryAllAccount");
+            // System.out.print(new String(bytes));
         } catch (ContractException e) {
             e.printStackTrace();
         }
         return bytes;
     }
+
+    // Todo
+    // public byte[] getAllHistory() {
+
+    // }
 
     public byte[] makeTransfer(String fromAccount, String toAccount, String elecAmount, String elecPrice) {
         byte[] bytes = null;
