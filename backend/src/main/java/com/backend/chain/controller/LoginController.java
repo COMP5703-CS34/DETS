@@ -6,10 +6,7 @@ import com.backend.chain.response.ResponseFactory;
 import com.backend.chain.utility.Utility;
 import org.hyperledger.fabric.chaincode.Account;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.json.JsonObject;
 
@@ -27,11 +24,16 @@ public class LoginController {
     @Autowired
     HyperledgerService hyperledgerService;
 
-    @GetMapping("/api/userInfo/{name}")
-    public Response getUserInfo(@PathVariable("name") String name) {
+    @GetMapping("/api/login/{name}")
+    public Response login(@RequestParam("name") String name,
+                          @RequestParam("InputPwd") String inputPwd) {
         byte[] bytes = hyperledgerService.login(name);
-        Account resAccount = (Account) Utility.toObject(bytes);
+        String realPwd = (String) Utility.toObject(bytes);
 
-        return ResponseFactory.buildSuccessResult(resAccount);
+        if (inputPwd.equals(realPwd)) {
+            return ResponseFactory.buildSuccessResult(true);
+        }
+
+        return ResponseFactory.buildSuccessResult(false);
     }
 }
