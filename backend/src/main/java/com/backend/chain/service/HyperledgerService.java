@@ -58,4 +58,17 @@ public class HyperledgerService {
 
         return bytes;
     }
+
+    public byte[] login(String name){
+        byte[] bytes = failureWarning.getBytes();
+        if (name == null) return bytes;
+        try {
+            bytes = contract.evaluateTransaction("getPassword", name);
+
+        } catch (ContractException e) {
+            e.printStackTrace();
+        }
+
+        return bytes;
+    }
 }
