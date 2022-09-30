@@ -3,7 +3,6 @@ package com.backend.chain.controller;
 import com.backend.chain.service.HyperledgerService;
 import com.backend.chain.response.Response;
 import com.backend.chain.response.ResponseFactory;
-import com.backend.chain.utility.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public class LoginController {
     public Response login(@RequestParam("name") String name,
                           @RequestParam("InputPwd") String inputPwd) {
         byte[] bytes = hyperledgerService.login(name);
-        String realPwd = (String) Utility.toObject(bytes);
+        String realPwd = new String(bytes);
 
         if (inputPwd.equals(realPwd)) {
             return ResponseFactory.buildSuccessResult(true);
