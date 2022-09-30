@@ -52,7 +52,7 @@ public class TransactionController {
             String accountId = accountJsonObject.getString("accountId");
             Integer elecAmount = accountJsonObject.getInt("elecAmount");
             Integer balance = accountJsonObject.getInt("balance");
-            Account account = new Account(accountId, elecAmount, balance);
+            Account account = new Account(accountId, elecAmount, balance, "Not Showing!");
             allUsers.add(account);
         }
 
