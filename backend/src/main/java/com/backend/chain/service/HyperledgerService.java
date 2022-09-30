@@ -60,7 +60,7 @@ public class HyperledgerService {
     }
 
     public byte[] login(String name){
-        byte[] bytes = failureWarning.getBytes();
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
         if (name == null) return bytes;
         try {
             bytes = contract.evaluateTransaction("getPassword", name);

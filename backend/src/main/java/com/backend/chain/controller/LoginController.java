@@ -4,11 +4,8 @@ import com.backend.chain.service.HyperledgerService;
 import com.backend.chain.response.Response;
 import com.backend.chain.response.ResponseFactory;
 import com.backend.chain.utility.Utility;
-import org.hyperledger.fabric.chaincode.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.json.JsonObject;
 
 /**
  * User Information Controller

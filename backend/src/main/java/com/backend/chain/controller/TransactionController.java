@@ -3,7 +3,6 @@ package com.backend.chain.controller;
 import com.backend.chain.response.Response;
 import com.backend.chain.response.ResponseFactory;
 import com.backend.chain.service.HyperledgerService;
-;
 import java.util.ArrayList;
 import java.util.List;
 
