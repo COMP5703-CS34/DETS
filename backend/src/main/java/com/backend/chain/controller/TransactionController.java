@@ -56,7 +56,7 @@ public class TransactionController {
             Account account = new Account(accountId, elecAmount, balance);
             allUsers.add(account);
         }
- 
+
         return ResponseFactory.buildSuccessResult(allUsers);
     }
 }
