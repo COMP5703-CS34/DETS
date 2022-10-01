@@ -192,6 +192,11 @@ export default {
   watch: {
     value(newVal) {
       this.findAndActivateTab(newVal);
+    },
+    activeTabIndex:{
+      handler(val, oldVal) {
+        this.$emit('tabSwitch', this.activeTabIndex)
+      }
     }
   }
 };

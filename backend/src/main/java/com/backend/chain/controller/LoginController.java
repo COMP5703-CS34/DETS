@@ -20,7 +20,7 @@ public class LoginController {
     @Autowired
     HyperledgerService hyperledgerService;
 
-    @GetMapping("/api/login/{name}")
+    @PostMapping("/api/login")
     public Response login(@RequestParam("name") String name,
                           @RequestParam("InputPwd") String inputPwd) {
         byte[] bytes = hyperledgerService.login(name);

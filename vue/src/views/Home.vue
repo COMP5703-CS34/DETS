@@ -5,66 +5,92 @@
         <h1 class="display-3  title">Distributed Electricity Transaction Platform</h1>
       </div>
       <div id = "rightInfo">
+        <button id = "logout" class="btn btn-primary btn-neutral" @click="logOut">Log Out</button>
         <p>Account ID: {{this.userInfo.accountId | nullValue}}</p>
         <p>Electricity Amount: {{this.userInfo.elecAmount | nullValue}}</p>
         <p>Balance: {{this.userInfo.balance | nullValue}}</p>
       </div>
     </div>
     <div>
-      <tabs fill class="container d-flex">
+      <tabs fill class="container d-flex" @tabSwitch="getTabIndex($event)">
         <card shadow>
-            <tab-pane title="User Infomation">
-              <div class="modal-body">
-                <md-content md-dynamic-height md-alignment-top-center>
-                  <p>
-                    please input the account name you want:
-                  </p>
-                </md-content>
-                <!-- messageClass is to show if there is invalid input -->
-                <!-- md-field :class="messageClass" > 
-                  <!- inputQuantity is to monitor input validation -->
-                  <input v-model="inName">
-                  <!-- show error hint if there is one, judge by disable.value -->
-                  <!-- md-content class="md-error" v-if="disabled.value" v-model="error.message">{{error.message}}</!-->
-                
+            <tab-pane title="Transaction" name="Transaction">
+              <div>
+                <div v-if="userList.length > 0">
+                  <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">Account ID</th>
+                            <th class="text-center">Electricity Amount</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody :key="index" v-for="(user, index) in userList">
+                        <tr>
+                            <td class="text-center">{{index+1}}</td>
+                            <td class="text-center">{{user.accountId}}</td>
+                            <td class="text-center">{{user.elecAmount}}</td>
+                            <td class="td-actions text-center">
+                              <button type="button" rel="tooltip" class="btn btn-info btn-icon " 
+                              @click="actionName = true; transDialog(user.accountId)">
+                                BUY
+                              </button>
+                              <button type="button" rel="tooltip" class="btn btn-success btn-icon " 
+                              @click="actionName = false; transDialog(user.accountId)">
+                                SELL
+                              </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div v-else>
+                  <h5>No other user.</h5>
+                </div>
               </div>
-              <button class="md-primary" @click="QueryTest">Query</button>
-              <div class="modal-body">
-                <md-content md-dynamic-height md-alignment-top-center>
-                  <p>
-                    please input the transaction Info you want:
-                  </p>
-                </md-content>
-                <!-- messageClass is to show if there is invalid input -->
-                <!-- md-field :class="messageClass" > 
-                  <!- inputQuantity is to monitor input validation -->
-                  <div class = "inputDiv">
-                    <p>From: </p>
-                    <input class="tans" v-model="transactionInfo.fromAccount" placeholder="fromAccount">
-                  </div>
-                  <div class = "inputDiv">
-                    <p>To </p>
-                    <input class="tans" v-model="transactionInfo.toAccount" placeholder="toAccount">
-                  </div>
-                  <div class = "inputDiv">
-                    <p>elecAmount: </p>
-                    <input class="tans" v-model="transactionInfo.elecAmount" placeholder="elecAmount">
-                  </div>
-                  <div class = "inputDiv">
-                    <p>elecPrice: </p>
-                    <input class="tans" v-model="transactionInfo.elecPrice" placeholder="elecPrice">
-                  </div>
-                  <!-- show error hint if there is one, judge by disable.value -->
-                  <!-- md-content class="md-error" v-if="disabled.value" v-model="error.message">{{error.message}}</!-->
-                
-              </div>
-              <button class="md-primary" @click="TransactionTest">Transaction</button>
-            </tab-pane>
+              <div>
+                <modal :show.sync="transDShow"
+                   body-classes="p-0"
+                   modal-classes="modal-dialog-centered modal-sm">
+                  <card type="secondary" shadow
+                        header-classes="bg-white pb-5"
+                        body-classes="px-lg-5 py-lg-5"
+                        class="border-0">
+                      <template>
+                          <div class="text-center text-muted mb-4">
+                              <h3>Transaction</h3>
+                          </div>
+                          <form role="form">
+                              <base-input alternative
+                                          type="number"
+                                          v-model="transactionInfo.elecAmount"
+                                          placeholder="Amount"
+                                          addon-left-icon="ni ni-sound-wave">
+                              </base-input>
+                              <div class="text-center">
+                                  <base-button type="primary" class="my-4" @click="transDShow = false; confirmDShow = true">OK</base-button>
+                                  <base-button type="primary" class="my-4" @click="transDShow = false; clearAllInfo()">Close</base-button>
+                              </div>
+                          </form>
+                      </template>
+                  </card>
+              </modal>
+              <modal :show.sync="confirmDShow">
+                <h6 slot="header" class="modal-title" id="modal-title-default">Transaction Confirm</h6>
 
-            <tab-pane title="Transaction">
-                <p class="description">Cosby sweater eu banh mi, qui irure terry richardson ex
-                    squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan
-                    american apparel, butcher voluptate nisi qui.</p>
+                <p>Current User: {{this.queryName}}</p>
+                <p v-show="this.actionName">Buy from: {{this.transactionInfo.fromAccount}}</p>
+                <p v-show="! this.actionName">Sell to: {{this.transactionInfo.toAccount}}</p>
+                <p>Electricity Amount: {{this.transactionInfo.elecAmount}}</p>
+
+                <template slot="footer">
+                    <base-button type="primary" @click="Transaction()">Confirm</base-button>
+                    <base-button type="link" class="ml-auto" @click="confirmDShow = false; clearAllInfo()">Cancel
+                    </base-button>
+                </template>
+            </modal>
+              </div>
             </tab-pane>
 
             <tab-pane title="History">
@@ -76,37 +102,49 @@
         </card>
       </tabs>
     </div>
+    
   </div>
+  
 </template>
 
 <script>
   import Tabs from "@/components/Tabs/Tabs.vue";
   import TabPane from "@/components/Tabs/TabPane.vue";
+  import Modal from "@/components/Modal.vue";
   export default {
     name: "home",
     components: {
       Tabs,
-      TabPane
+      TabPane,
+      Modal
     },
     data() {
       return {
+          transDShow: false,    //if activate dialog
+          confirmDShow: false,
+          actionName: Boolean,
+          amount: null,
+          tabName: "",
           userInfo: {
             accountId: null,
             elecAmount: null,
             balance: null
           },
-          queryName: "Home",
+          queryName: localStorage.getItem("name"),
           inName: null,
           transactionInfo: {
             toAccount: null,
             fromAccount: null, 
             elecAmount: null, 
-            elecPrice: null
-          }
+            elecPrice: 1
+          },
+          userList: []
         }
     },
     created() {
       this.getUserInfo();
+      this.hasCache();
+      this.getAllUser();
     },
     filters: {
       nullValue(str) {
@@ -114,24 +152,32 @@
       }
     },
     methods: {
-      async getUserInfo(name = this.queryName) {
-        name = String(name)
+      handleTabClick(key){
+        console.log(this.tabName)
+      },
+      hasCache(){
+          console.log(localStorage.getItem("name"))
+          if(localStorage.getItem("name") == null){
+              this.$router.push("/login")
+          }
+      },
+      logOut(){
+        window.localStorage.clear()
+        this.$router.push("/login")
+      },
+      async getUserInfo() {
         await this.$axios({
           method: "get",
-          //url: `/test`
-          url: `/userInfo/${name}`
+          url: `/userInfo/${this.queryName}`
         }).then((resp) => {
           console.log(resp)
           this.userInfo= resp.data.result;
         })
       },
-      QueryTest() {
-        this.getUserInfo(this.inName)
-      },
-      TransactionTest() {
+      Transaction() {
         this.$axios({
           method: "post",
-          url: `/doTransaction`,
+          url: `/transaction/transfer`,
           params: {
             fromAccount: this.transactionInfo.fromAccount,
             toAccount: this.transactionInfo.toAccount,
@@ -140,9 +186,49 @@
           }
         }).then((resp) => {
           console.log(resp)
+          this.clearAllInfo()
+          this.getUserInfo()
+          this.getAllUser()
+          this.confirmDShow = false;
         })
+      },
+      async getAllUser() {
+        await this.$axios({
+          method: "get",
+          url: `/transaction/queryall/${this.queryName}`
+        }).then((resp) => {
+          console.log(resp)
+          console.log(resp.data.result)
+          this.userList = resp.data.result
+        })
+      },
+      getTabIndex(res) {
+        switch(res) {
+          case 0:
+            this.getAllUser();
+            break;
+          case 1:
+            break;
+        }
+      },
+      transDialog(transUser) {
+        this.transDShow = true;
+        if(this.actionName){
+          //Buy
+          this.transactionInfo.fromAccount = transUser;
+          this.transactionInfo.toAccount = this.queryName;
+        }else{
+          //Sell
+          this.transactionInfo.toAccount = transUser;
+          this.transactionInfo.fromAccount = this.queryName;
+        }
+      },
+      clearAllInfo(){
+        this.transactionInfo.fromAccount = null;
+        this.transactionInfo.toAccount = null;
+        this.transactionInfo.elecAmount = null;
       }
-    },
+    }
   };
 </script>
 
@@ -158,18 +244,23 @@
     justify-content: center;
   }
   #rightInfo{
-    margin-top: 5%;
-    margin-right: 60px;
+    margin-top: 2%;
+    margin-right: 70px;
     width: 30%;
     float: right;
     padding-left: 8%;
     text-align: right;
+    vertical-align: auto;
   }
   .title{
-    margin-top: 30px;
-    margin-left: 60px;
+    margin-top: 3%;
+    margin-left: 70px;
     margin-bottom: 50px;
     color: #6A5ACD;
+  }
+  #logout{
+    margin-right: -8px;
+    margin-bottom: 10px;
   }
   .container{
     min-width: 85%;
