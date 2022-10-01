@@ -88,7 +88,19 @@ public class HyperledgerService {
         byte[] bytes = NO_OBJECT_WARNING.getBytes();
         if (name == null) return bytes;
         try {
-            bytes = contract.evaluateTransaction("delete", name);
+            bytes = contract.submitTransaction("delete", name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bytes;
+    }
+
+    public byte[] Update(String name, String elecAmount, String balance, String password) {
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
+
+        try {
+            bytes = contract.submitTransaction("update", name, elecAmount, balance, password);
         } catch (Exception e) {
             e.printStackTrace();
         }
