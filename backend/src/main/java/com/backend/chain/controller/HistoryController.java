@@ -1,5 +1,6 @@
 package com.backend.chain.controller;
 
+import com.backend.chain.entity.History;
 import com.backend.chain.response.Response;
 import com.backend.chain.response.ResponseFactory;
 import com.backend.chain.service.HyperledgerService;
@@ -27,7 +28,7 @@ public class HistoryController {
     @GetMapping("/api/History/{name}")
     public Response getHistory(@PathVariable("name") String name) {
 
-        List<List<String>> allHistory = new ArrayList<>();
+        List<History> allHistory = new ArrayList<>();
 
         byte[] bytes = hyperledgerService.getHisotry(name);
         String Process = new String(bytes);
@@ -37,25 +38,15 @@ public class HistoryController {
         System.out.println(jsonArray.toString());
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            List<String> history = new ArrayList<>();
             JSONObject historyJsonObject = jsonArray.getJSONObject(i);
-            String transactionID = historyJsonObject.getString("transactionID");
+            String transactionID = historyJsonObject.getString("transactionId");
             String timestamp = historyJsonObject.getString("timestamp");
             String accountId = historyJsonObject.getString("accountId");
             double elecAmount = historyJsonObject.getDouble("elecAmount");
             double balance = historyJsonObject.getDouble("balance");
             Boolean isDeleted = historyJsonObject.getBoolean("isDeleted");
 
-            String elecAmountString = String.valueOf(elecAmount);
-            String balanceString = String.valueOf(balance);
-            String isDeletedString = isDeleted.toString();
-
-            history.add(transactionID);
-            history.add(timestamp);
-            history.add(accountId);
-            history.add(elecAmountString);
-            history.add(balanceString);
-            history.add(isDeletedString);
+            History history = new History(transactionID, timestamp, accountId, elecAmount, balance, isDeleted);
 
             allHistory.add(history);
         }
