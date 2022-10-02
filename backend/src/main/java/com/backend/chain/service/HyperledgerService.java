@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * Hyperledger Handler
  *
  * @author Yiwei Xu
- * @date 2022/09
+ * @date 2022/10
  */
 
 @Service
@@ -105,6 +105,18 @@ public class HyperledgerService {
             e.printStackTrace();
         }
 
+        return bytes;
+    }
+
+    public byte[] getHisotry(String name) {
+        byte[] bytes = null; //NO_OBJECT_WARNING.getBytes();
+        //if (name == null) return bytes;
+        try {
+            bytes = contract.evaluateTransaction("queryHistory", name);
+            // System.out.print(new String(bytes));
+        } catch (ContractException e) {
+            e.printStackTrace();
+        }
         return bytes;
     }
 }
