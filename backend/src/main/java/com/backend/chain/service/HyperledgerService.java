@@ -71,4 +71,40 @@ public class HyperledgerService {
 
         return bytes;
     }
+
+    public byte[] add(String name, String elecAmount, String balance, String password) {
+        byte[] bytes = null;
+
+        try {
+            bytes = contract.submitTransaction("add", name, elecAmount, balance, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bytes;
+    }
+
+    public byte[] delete(String name) {
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
+        if (name == null) return bytes;
+        try {
+            bytes = contract.submitTransaction("delete", name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bytes;
+    }
+
+    public byte[] Update(String name, String elecAmount, String balance, String password) {
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
+
+        try {
+            bytes = contract.submitTransaction("update", name, elecAmount, balance, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bytes;
+    }
 }
