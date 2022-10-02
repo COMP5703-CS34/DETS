@@ -72,7 +72,7 @@ public class HyperledgerService {
         return bytes;
     }
 
-    public byte[] add(String name, String elecAmount, String balance, String password) {
+    public byte[] addUser(String name, String elecAmount, String balance, String password) {
         byte[] bytes = null;
 
         try {
@@ -84,7 +84,7 @@ public class HyperledgerService {
         return bytes;
     }
 
-    public byte[] delete(String name) {
+    public byte[] deleteUser(String name) {
         byte[] bytes = NO_OBJECT_WARNING.getBytes();
         if (name == null) return bytes;
         try {
@@ -96,7 +96,7 @@ public class HyperledgerService {
         return bytes;
     }
 
-    public byte[] Update(String name, String elecAmount, String balance, String password) {
+    public byte[] updateUser(String name, String elecAmount, String balance, String password) {
         byte[] bytes = NO_OBJECT_WARNING.getBytes();
 
         try {
