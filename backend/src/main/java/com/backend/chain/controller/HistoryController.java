@@ -29,13 +29,14 @@ public class HistoryController {
     public Response getHistory(@PathVariable("name") String name) {
 
         List<History> allHistory = new ArrayList<>();
+        byte[] bytes = hyperledgerService.getHistory(name);
+        if (bytes == null) {
+            return ResponseFactory.buildFailResult(String.format("No such object: %s", name));
+        }
 
-        byte[] bytes = hyperledgerService.getHisotry(name);
         String Process = new String(bytes);
         JSONObject jsonObject = new JSONObject(Process);
         JSONArray jsonArray = jsonObject.getJSONArray("transactions").getJSONArray(0);
-
-        System.out.println(jsonArray.toString());
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject historyJsonObject = jsonArray.getJSONObject(i);

@@ -42,11 +42,6 @@ public class HyperledgerService {
         return bytes;
     }
 
-    // Todo
-    // public byte[] getAllHistory() {
-
-    // }
-
     public byte[] makeTransfer(String fromAccount, String toAccount, String elecAmount, String elecPrice) {
         byte[] bytes = null;
 
@@ -108,12 +103,11 @@ public class HyperledgerService {
         return bytes;
     }
 
-    public byte[] getHisotry(String name) {
-        byte[] bytes = null; //NO_OBJECT_WARNING.getBytes();
-        //if (name == null) return bytes;
+    public byte[] getHistory(String name) {
+        byte[] bytes = null;
+
         try {
             bytes = contract.evaluateTransaction("queryHistory", name);
-            // System.out.print(new String(bytes));
         } catch (ContractException e) {
             e.printStackTrace();
         }

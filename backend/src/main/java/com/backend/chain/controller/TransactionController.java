@@ -32,20 +32,22 @@ public class TransactionController {
                                   @RequestParam("elecPrice") String elecPrice) {
 
         byte[] bytes = hyperledgerService.makeTransfer(toAccount, fromAccount, elecAmount, elecPrice);
+        if (bytes == null) {
+            return ResponseFactory.buildFailResult("Illegal Transaction incurred!");
+        }
 
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
 
     @GetMapping("/api/transaction/queryall/{name}")
     public Response getAllUser(@PathVariable("name") String name) {
-        List<Account> allUsers = new ArrayList<>();
 
+        List<Account> allUsers = new ArrayList<>();
         byte[] bytes = hyperledgerService.getAllUser();
+
         String toBeProcessed = new String(bytes);
         JSONObject jsonObject = new JSONObject(toBeProcessed);
         JSONArray jsonArray = jsonObject.getJSONArray("accounts").getJSONArray(0);
-
-        System.out.println(jsonArray.toString());
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject accountJsonObject = jsonArray.getJSONObject(i);

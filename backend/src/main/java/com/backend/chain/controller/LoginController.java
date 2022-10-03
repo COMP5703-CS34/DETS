@@ -30,6 +30,6 @@ public class LoginController {
             return ResponseFactory.buildSuccessResult(true);
         }
 
-        return ResponseFactory.buildSuccessResult(false);
+        return ResponseFactory.buildFailResult("Invalid password or account");
     }
 }
