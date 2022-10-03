@@ -55,7 +55,8 @@ public class TransactionController {
             if (accountId.equals(name)) continue;
             Double elecAmount = accountJsonObject.getDouble("elecAmount");
             Double balance = accountJsonObject.getDouble("balance");
-            Account account = new Account(accountId, elecAmount, balance, "Not Showing!");
+            String identity = accountJsonObject.getString("identity");
+            Account account = new Account(accountId, elecAmount, balance, "Not Showing!", identity);
             allUsers.add(account);
         }
 

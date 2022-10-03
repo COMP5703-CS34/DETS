@@ -67,11 +67,12 @@ public class HyperledgerService {
         return bytes;
     }
 
-    public byte[] addUser(String name, String elecAmount, String balance, String password) {
+    public byte[] addUser(String name, String elecAmount, String balance, String password, String identity,
+                          String adminID) {
         byte[] bytes = null;
 
         try {
-            bytes = contract.submitTransaction("add", name, elecAmount, balance, password);
+            bytes = contract.submitTransaction("add", name, elecAmount, balance, password, identity, adminID);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,11 +92,11 @@ public class HyperledgerService {
         return bytes;
     }
 
-    public byte[] updateUser(String name, String elecAmount, String balance, String password) {
+    public byte[] updateUser(String name, String elecAmount, String balance, String password, String identity) {
         byte[] bytes = NO_OBJECT_WARNING.getBytes();
 
         try {
-            bytes = contract.submitTransaction("update", name, elecAmount, balance, password);
+            bytes = contract.submitTransaction("update", name, elecAmount, balance, password, identity);
         } catch (Exception e) {
             e.printStackTrace();
         }
