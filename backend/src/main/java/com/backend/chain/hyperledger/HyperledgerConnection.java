@@ -27,10 +27,6 @@ public class HyperledgerConnection {
                 gateway = builder.connect();
                 Network network = gateway.getNetwork("mychannel");
                 contract = network.getContract("elec-chaincode");
-
-                byte[] bytes = contract.evaluateTransaction("query", "Plant");
-                Account user = (Account)Utility.toObject(bytes);
-                System.out.printf("Account:%s Elec:%f balance:%f\n", user.getAccountId(), user.getElecAmount(), user.getBalance());
             } catch (Exception e) {
                 e.printStackTrace();
             }
