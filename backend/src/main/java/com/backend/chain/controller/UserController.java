@@ -25,9 +25,11 @@ public class UserController {
     public Response Add(@RequestParam("name") String accountID,
                         @RequestParam("elecAmount") String elecAmount,
                         @RequestParam("balance") String balance,
-                        @RequestParam("password") String password) {
+                        @RequestParam("password") String password,
+                        @RequestParam("identity") String identity,
+                        @RequestParam("adminID") String adminID) {
 
-        byte[] bytes = hyperledgerService.addUser(accountID, elecAmount, balance, password);
+        byte[] bytes = hyperledgerService.addUser(accountID, elecAmount, balance, password, identity, adminID);
 
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
@@ -36,8 +38,9 @@ public class UserController {
     public Response Update(@RequestParam("name") String accountID,
                            @RequestParam("elecAmount") String elecAmount,
                            @RequestParam("balance") String balance,
-                           @RequestParam("password") String password) {
-        byte[] bytes = hyperledgerService.updateUser(accountID, elecAmount, balance, password);
+                           @RequestParam("password") String password,
+                           @RequestParam("identity") String identity) {
+        byte[] bytes = hyperledgerService.updateUser(accountID, elecAmount, balance, password, identity);
 
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
