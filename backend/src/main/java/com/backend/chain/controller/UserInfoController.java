@@ -29,7 +29,6 @@ public class UserInfoController {
     public Response getUserInfo(@PathVariable("name") String name) {
         byte[] bytes = hyperledgerService.getUserInfo(name);
         Account resAccount = (Account) Utility.toObject(bytes);
-
         return ResponseFactory.buildSuccessResult(resAccount);
     }
 }

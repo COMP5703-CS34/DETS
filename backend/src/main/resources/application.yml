@@ -1,0 +1,14 @@
+server:
+  port: 3000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test #?serverTimezone=UTC
+    username: u
+    password: u
+    type: com.alibaba.druid.pool.DruidDataSource
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 1MB
