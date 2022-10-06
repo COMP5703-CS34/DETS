@@ -21,22 +21,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class HistoryController {
-
     @Autowired
     HyperledgerService hyperledgerService;
-
     @GetMapping("/api/History/{name}")
     public Response getHistory(@PathVariable("name") String name) {
-
         List<History> allHistory = new ArrayList<>();
-
         byte[] bytes = hyperledgerService.getHisotry(name);
         String Process = new String(bytes);
         JSONObject jsonObject = new JSONObject(Process);
         JSONArray jsonArray = jsonObject.getJSONArray("transactions").getJSONArray(0);
-
         System.out.println(jsonArray.toString());
-
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject historyJsonObject = jsonArray.getJSONObject(i);
             String transactionID = historyJsonObject.getString("transactionId");
@@ -45,12 +39,9 @@ public class HistoryController {
             double elecAmount = historyJsonObject.getDouble("elecAmount");
             double balance = historyJsonObject.getDouble("balance");
             Boolean isDeleted = historyJsonObject.getBoolean("isDeleted");
-
             History history = new History(transactionID, timestamp, accountId, elecAmount, balance, isDeleted);
-
             allHistory.add(history);
         }
-
         return ResponseFactory.buildSuccessResult(allHistory);
     }
 }

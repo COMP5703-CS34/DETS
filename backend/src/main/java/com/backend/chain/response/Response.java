@@ -8,9 +8,12 @@ public class Response {
     private String message;
     private Object result;
 
-    Response(int code, String message, Object data) {
+    public Response(int code, String message, Object data) {
         this.code = code;
         this.message = message;
         this.result = data;
+    }
+
+    public Response() {
     }
 }
