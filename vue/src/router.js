@@ -5,6 +5,7 @@ import AppFooter from "./layout/AppFooter";
 import Components from "./views/Components.vue";
 import Landing from "./views/Landing.vue";
 import Home from "./views/Home.vue";
+import AdminManage from "./views/AdminManage.vue";
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import Profile from "./views/Profile.vue";
@@ -16,15 +17,21 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "Home",
+      name: "Login",
       components: {
-        default: Home
+        default: Login
       }
     },{
       path: "/home",
-      name: "home",
+      name: "Home",
       components: {
-        default: Components,
+        default: Home,
+      }
+    },{
+      path: "/adminmanage",
+      name: "AdminManage",
+      components: {
+        default: AdminManage,
       }
     },
     {

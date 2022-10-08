@@ -46,23 +46,24 @@
     </section>
 </template>
 <script>
+import Store from "../Store.js"
 export default {
     data(){
         return{
             userInfo:{
                 name: null,
-                InputPwd: null
+                InputPwd: null,
+                identity: null
             }
         }
     },
     created(){
-        this.judge();
+        //this.judge();
     },
     methods:{
         judge(){
-            if(localStorage.getItem("name") != null){
-                window.localStorage.clear()
-            }
+            let tem = Store.getItem("name")
+            console.log(tem)
         },
         signIn(){
             this.$axios({
@@ -73,11 +74,26 @@ export default {
                     InputPwd: this.userInfo.InputPwd
                 }
             }).then((resp) => {
-                console.log(resp.data.result)
-                if(resp.data.result){
-                    localStorage.setItem("name", this.userInfo.name)
-                    console.log(localStorage.getItem("name"))
-                    this.$router.push("/")
+                console.log(resp)
+                if(resp.data.code == 200){
+                    let nameParams = {
+                        key: 'dis-elec-tran-name',
+                        value: this.userInfo.name,
+                        validity: 259200000    //3days
+                    }
+                    let identityParams = {
+                        key: 'dis-elec-tran-identity',
+                        value: resp.data.result,
+                        validity: 259200000    //3days
+                    }
+                    Store.setItem(nameParams)
+                    Store.setItem(identityParams)
+                    if(resp.data.result.toUpperCase()=="ADMIN"){
+                        this.$router.push("/adminmanage")
+                    }else{
+                        this.$router.push("/home")
+                    }
+                    //this.$router.push("/")
                 }else
                     alert("Username or password error!")
             })

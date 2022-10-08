@@ -94,10 +94,31 @@
             </tab-pane>
 
             <tab-pane title="History">
-                <p class="description">Raw denim you probably haven't heard of them jean shorts
-                    Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache
-                    cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro
-                    keffiyeh dreamcatcher synth.</p>
+              <div>
+                <div v-if="historyList.length > 0">
+                  <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">From</th>
+                            <th class="text-center">To</th>
+                            <th class="text-center">Electricity Amount</th>
+                            <th class="text-center">Electricity Price</th>
+                        </tr>
+                    </thead>
+                    <tbody :key="index" v-for="(item, index) in historyList">
+                        <tr>
+                            <td class="text-center">{{index+1}}</td>
+                            <td class="text-center">{{item}}</td>
+                            
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div v-else>
+                  <h5>No transaction history.</h5>
+                </div>
+              </div>
             </tab-pane>
         </card>
       </tabs>
@@ -111,6 +132,7 @@
   import Tabs from "@/components/Tabs/Tabs.vue";
   import TabPane from "@/components/Tabs/TabPane.vue";
   import Modal from "@/components/Modal.vue";
+  import Store from "../Store.js"
   export default {
     name: "home",
     components: {
@@ -130,7 +152,8 @@
             elecAmount: null,
             balance: null
           },
-          queryName: localStorage.getItem("name"),
+          queryName: Store.getItem("dis-elec-tran-name"),
+          userIdentity: Store.getItem("dis-elec-tran-identity"),
           inName: null,
           transactionInfo: {
             toAccount: null,
@@ -138,7 +161,8 @@
             elecAmount: null, 
             elecPrice: 1
           },
-          userList: []
+          userList: [],
+          historyList: []
         }
     },
     created() {
@@ -156,13 +180,17 @@
         console.log(this.tabName)
       },
       hasCache(){
-          console.log(localStorage.getItem("name"))
-          if(localStorage.getItem("name") == null){
+          console.log(Store.getItem("dis-elec-tran-name"))
+          if(Store.getItem("dis-elec-tran-name") == null){
               this.$router.push("/login")
           }
       },
       logOut(){
-        window.localStorage.clear()
+        if(Store.getItem("dis-elec-tran-name") != null){
+          window.localStorage.removeItem("dis-elec-tran-name")
+          window.localStorage.removeItem("dis-elec-tran-identity")
+        }
+        
         this.$router.push("/login")
       },
       async getUserInfo() {
