@@ -230,6 +230,16 @@
           this.userList = resp.data.result
         })
       },
+      async getHistory() {
+        await this.$axios({
+          method: "get",
+          url: `/History/${this.queryName}`
+        }).then((resp) => {
+          console.log(resp)
+          console.log(resp.data.result)
+          this.historyList = resp.data.result
+        })
+      },
       getTabIndex(res) {
         switch(res) {
           case 0:
