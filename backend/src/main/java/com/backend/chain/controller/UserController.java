@@ -21,7 +21,7 @@ public class UserController {
     @Autowired
     HyperledgerService hyperledgerService;
 
-    @PostMapping("/api/userControl/add/")
+    @PostMapping("/api/userControl/add")
     public Response Add(@RequestParam("name") String accountID,
                         @RequestParam("elecAmount") String elecAmount,
                         @RequestParam("balance") String balance,
@@ -34,7 +34,7 @@ public class UserController {
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
 
-    @PostMapping("/api/userControl/update/")
+    @PostMapping("/api/userControl/update")
     public Response Update(@RequestParam("name") String accountID,
                            @RequestParam("elecAmount") String elecAmount,
                            @RequestParam("balance") String balance,
@@ -45,8 +45,8 @@ public class UserController {
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
 
-    @GetMapping("/api/userControl/delete/{name}")
-    public Response Delete(@PathVariable("name") String name) {
+    @PostMapping("/api/userControl/delete")
+    public Response Delete(@RequestParam("name") String name) {
 
         byte[] bytes = hyperledgerService.deleteUser(name);
 
