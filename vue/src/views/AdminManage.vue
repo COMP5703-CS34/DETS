@@ -86,7 +86,7 @@
                     <td class="text-center">{{(user.identity === 'User')?user.balance:'/'}}</td>
                     <td class="text-center">{{user.identity}}</td>
                     <td class="td-actions text-center">
-                      <button type="button" rel="tooltip" class="btn btn-info btn-icon ni ni-archive-2" :disabled="(user.identity === 'Admin')"
+                      <button type="button" rel="tooltip" class="btn btn-info btn-icon ni ni-archive-2"
                         @click="actionName = false;
                           updateDShow = true;
                           accountInfo.name = user.accountId;
@@ -96,7 +96,7 @@
                         Update
                       </button>
                       <button type="button" rel="tooltip" class="btn btn-success btn-icon ni ni-fat-remove" 
-                      @click="userInfo = user.accountId; removeDShow = true">
+                      @click="accountInfo.name = user.accountId; removeDShow = true">
                         Remove
                       </button>
                     </td>
@@ -107,7 +107,7 @@
             <modal :show.sync="removeDShow">
               <h5 slot="header" class="modal-title" id="modal-title-default">Remove User Confirm</h5>
               <p>Are you sure to remove user:</p>
-              <h6>{{userInfo.name}}</h6>
+              <h6>{{accountInfo.name}}</h6>
               <p>?</p>
               <template slot="footer">
                   <base-button type="primary" @click="removeUser()">Confirm</base-button>
@@ -184,8 +184,7 @@
             <p v-show="actionName">Admin ID:           {{accountInfo.adminID}}</p>
             <template slot="footer">
                 <base-button type="primary" @click="userOperation()">Confirm</base-button>
-                <base-button type="link" class="ml-auto" @click="confirmDShow = false; clearAllInfo()">Cancel
-                </base-button>
+                <base-button type="link" class="ml-auto" @click="confirmDShow = false">Cancel</base-button>
             </template>
           </modal>
       </div>
@@ -211,6 +210,7 @@
       return {
           addDShow: false,    //if activate dialog
           updateDShow: false,
+          removeDShow: false,
           confirmDShow: false,
           actionName: Boolean,
           adminName: Store.getItem("dis-elec-tran-name"),
@@ -266,7 +266,7 @@
       },
       userOperation() {
         let u = null
-        if(actionName){
+        if(this.actionName){
           // add
           u = `/userControl/add`
         }else{
@@ -288,13 +288,23 @@
           console.log(resp)
           this.clearAllInfo()
           this.getAllUser()
-          this.addConfirmDShow = false;
+          this.confirmDShow = false;
+          if(this.actionName){
+            // add
+            this.addDShow = false;
+          }else{
+            //update
+            this.updateDShow = false;
+          }
         })
       },
       removeUser(){
         this.$axios({
-          method: "get",
-          url: `/delete/${this.accountInfo.name}`
+          method: "post",
+          url: `/userControl/delete`,
+          params: {
+            name: this.accountInfo.name
+          }
         }).then((resp) => {
           console.log(resp)
           this.clearAllInfo()
