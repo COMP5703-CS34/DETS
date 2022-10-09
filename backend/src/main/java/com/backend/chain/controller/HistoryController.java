@@ -30,7 +30,7 @@ public class HistoryController {
 
         List<History> allHistory = new ArrayList<>();
         byte[] bytes = hyperledgerService.getHistory(name);
-        if (bytes == null) {
+        if (bytes.toString().isEmpty()) {
             return ResponseFactory.buildFailResult(String.format("No such object: %s", name));
         }
 
