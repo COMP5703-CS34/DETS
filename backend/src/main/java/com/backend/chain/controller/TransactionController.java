@@ -32,7 +32,7 @@ public class TransactionController {
                                   @RequestParam("elecPrice") String elecPrice) {
 
         byte[] bytes = hyperledgerService.makeTransfer(toAccount, fromAccount, elecAmount, elecPrice);
-        if (bytes == null) {
+        if (bytes.toString().isEmpty()) {
             return ResponseFactory.buildFailResult("Illegal Transaction incurred!");
         }
 
@@ -44,6 +44,10 @@ public class TransactionController {
 
         List<Account> allUsers = new ArrayList<>();
         byte[] bytes = hyperledgerService.getAllUser();
+
+        if (bytes.toString().isEmpty()) {
+            return ResponseFactory.buildFailResult("No transaction subjects yet");
+        }
 
         String toBeProcessed = new String(bytes);
         JSONObject jsonObject = new JSONObject(toBeProcessed);
