@@ -4,8 +4,7 @@ package com.backend.chain.controller;
 
 import com.backend.chain.entity.Request;
 import com.backend.chain.response.Response;
-
-
+import com.backend.chain.response.ResponseFactory;
 import com.backend.chain.service.RequestService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +22,22 @@ public class RequestController {
     @PostMapping("api/add")
     public Response addRequest(Request req){
         requestService.addRequest(req);
-        return Response.success();
+        return ResponseFactory.buildSuccessResult("Request Added!");
     }
     @GetMapping("api/del/{id}")
     public Response delRequest(@PathVariable Integer id){
         requestService.deleteRequest(id);
-        return Response.success();
+        return ResponseFactory.buildSuccessResult("Request Deleted!");
     }
     @PostMapping("api/update")
     public Response updateRequest(Request req){
         requestService.updateRequest(req.getId(),req.getStatus());
-        return Response.success();
+        return ResponseFactory.buildSuccessResult("Request Updated!");
     }
     @GetMapping("api/query/{userid}")
     public Response addRequest(@PathVariable String userid){
         List<Request> list=requestService.getAllByUser(userid);
-        return Response.success(list);
+        return ResponseFactory.buildSuccessResult(list);
     }
 
 
