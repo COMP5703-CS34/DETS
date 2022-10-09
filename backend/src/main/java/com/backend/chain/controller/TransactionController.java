@@ -39,8 +39,9 @@ public class TransactionController {
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
 
-    @GetMapping("/api/transaction/queryall/{name}")
-    public Response getAllUser(@PathVariable("name") String name) {
+    @GetMapping("/api/transaction/queryall/{option}/{name}")
+    public Response getAllUser(@PathVariable("option") String option,
+                               @PathVariable("name") String name) {
 
         List<Account> allUsers = new ArrayList<>();
         byte[] bytes = hyperledgerService.getAllUser();
@@ -56,10 +57,10 @@ public class TransactionController {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject accountJsonObject = jsonArray.getJSONObject(i);
             String accountId = accountJsonObject.getString("accountId");
-            if (accountId.equals(name)) continue;
             Double elecAmount = accountJsonObject.getDouble("elecAmount");
             Double balance = accountJsonObject.getDouble("balance");
             String identity = accountJsonObject.getString("identity");
+            if (option.equals("useronly")&&(accountId.equals(name) || identity.equals("Admin"))) continue;
             Account account = new Account(accountId, elecAmount, balance, "Not Showing!", identity);
             allUsers.add(account);
         }

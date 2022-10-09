@@ -223,7 +223,7 @@
       async getAllUser() {
         await this.$axios({
           method: "get",
-          url: `/transaction/queryall/${this.queryName}`
+          url: `/transaction/queryall/${"useronly"}/${this.queryName}`
         }).then((resp) => {
           console.log(resp)
           console.log(resp.data.result)

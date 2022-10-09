@@ -87,6 +87,7 @@
                     <td class="text-center">{{user.identity}}</td>
                     <td class="td-actions text-center">
                       <button type="button" rel="tooltip" class="btn btn-info btn-icon ni ni-archive-2"
+                        :disabled="user.accountId === 'Admin'"
                         @click="actionName = false;
                           updateDShow = true;
                           accountInfo.name = user.accountId;
@@ -96,7 +97,7 @@
                         Update
                       </button>
                       <button type="button" rel="tooltip" class="btn btn-success btn-icon ni ni-fat-remove" 
-                      @click="accountInfo.name = user.accountId; removeDShow = true">
+                      @click="accountInfo.name = user.accountId; removeDShow = true" :disabled="user.accountId === 'Admin'">
                         Remove
                       </button>
                     </td>
@@ -257,7 +258,7 @@
       async getAllUser() {
         await this.$axios({
           method: "get",
-          url: `/transaction/queryall/${this.adminName}`
+          url: `/transaction/queryall/${"all"}/${this.adminName}`
         }).then((resp) => {
           console.log(resp)
           console.log(resp.data.result)
