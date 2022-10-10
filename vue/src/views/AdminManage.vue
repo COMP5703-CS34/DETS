@@ -82,8 +82,8 @@
                 <tr>
                     <td class="text-center">{{index+1}}</td>
                     <td class="text-center">{{(user.accountId === adminName)?user.accountId + ' (ME)':user.accountId}}</td>
-                    <td class="text-center">{{(user.identity === 'User')?user.elecAmount:'/'}}</td>
-                    <td class="text-center">{{(user.identity === 'User')?user.balance:'/'}}</td>
+                    <td class="text-center">{{(user.identity === 'User')?numFilter(user.elecAmount):'/'}}</td>
+                    <td class="text-center">{{(user.identity === 'User')?numFilter(user.balance):'/'}}</td>
                     <td class="text-center">{{user.identity}}</td>
                     <td class="td-actions text-center">
                       <button type="button" rel="tooltip" class="btn btn-info btn-icon ni ni-archive-2"
@@ -241,6 +241,10 @@
       }
     },
     methods: {
+      numFilter(value){
+        value = parseFloat(value).toFixed(2)
+        return value
+      },
       hasCache(){
           console.log(Store.getItem("dis-elec-tran-name"))
           if(Store.getItem("dis-elec-tran-name") == null){

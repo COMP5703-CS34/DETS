@@ -203,8 +203,7 @@ export default {
 </script>
 
 <style>
-  .nav-item{
-    margin-bottom: 3px;
+  .nav-wrapper{
+    height: 220px;
   }
-
 </style>

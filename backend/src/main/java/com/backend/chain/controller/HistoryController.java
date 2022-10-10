@@ -41,7 +41,7 @@ public class HistoryController {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject historyJsonObject = jsonArray.getJSONObject(i);
             String transactionID = historyJsonObject.getString("transactionId");
-            String timestamp = historyJsonObject.getString("timestamp");
+            String timestamp = this.DateFormat(historyJsonObject.getString("timestamp"));
             String accountId = historyJsonObject.getString("accountId");
             double elecAmount = historyJsonObject.getDouble("elecAmount");
             double balance = historyJsonObject.getDouble("balance");
@@ -54,4 +54,9 @@ public class HistoryController {
 
         return ResponseFactory.buildSuccessResult(allHistory);
     }
+
+    private String DateFormat(String jsonDate) {
+        jsonDate = jsonDate.replace('T', ' ');
+        jsonDate = jsonDate.substring(0, jsonDate.indexOf('.'));
+        return jsonDate;    }
 }

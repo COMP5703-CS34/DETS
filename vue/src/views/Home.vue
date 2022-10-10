@@ -7,8 +7,8 @@
       <div id = "rightInfo">
         <button id = "logout" class="btn btn-primary btn-neutral" @click="logOut">Log Out</button>
         <p>Account ID: {{this.userInfo.accountId | nullValue}}</p>
-        <p>Electricity Amount: {{this.userInfo.elecAmount | nullValue}}</p>
-        <p>Balance: {{this.userInfo.balance | nullValue}}</p>
+        <p>Electricity Amount: {{numFilter(this.userInfo.elecAmount) | nullValue}}</p>
+        <p>Balance: {{numFilter(this.userInfo.balance) | nullValue}}</p>
       </div>
     </div>
     <div>
@@ -26,11 +26,11 @@
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody :key="index" v-for="(user, index) in userList">
+                    <tbody :key="userIndex" v-for="(user, userIndex) in userList">
                         <tr>
-                            <td class="text-center">{{index+1}}</td>
+                            <td class="text-center">{{userIndex+1}}</td>
                             <td class="text-center">{{user.accountId}}</td>
-                            <td class="text-center">{{user.elecAmount}}</td>
+                            <td class="text-center">{{numFilter(user.elecAmount)}}</td>
                             <td class="td-actions text-center">
                               <button type="button" rel="tooltip" class="btn btn-info btn-icon " 
                               @click="actionName = true; transDialog(user.accountId)">
@@ -99,18 +99,18 @@
                   <table class="table">
                     <thead>
                         <tr>
-                            <th class="text-center">#</th>
-                            <th class="text-center">From</th>
-                            <th class="text-center">To</th>
+                            <th class="text-center">Datetime</th>
+                            <th class="text-center">Transaction ID</th>
                             <th class="text-center">Electricity Amount</th>
-                            <th class="text-center">Electricity Price</th>
+                            <th class="text-center">Remain Balance</th>
                         </tr>
                     </thead>
-                    <tbody :key="index" v-for="(item, index) in historyList">
+                    <tbody :key="item.transactionId" v-for="item in historyList">
                         <tr>
-                            <td class="text-center">{{index+1}}</td>
-                            <td class="text-center">{{item}}</td>
-                            
+                            <td class="text-center">{{item.timestamp}}</td>
+                            <td class="text-center" style="word-break:break-all; width:35%;">{{item.transactionId}}</td>
+                            <td class="text-center">{{numFilter(item.elecAmount)}}</td>
+                            <td class="text-center">{{numFilter(item.balance)}}</td>
                         </tr>
                     </tbody>
                   </table>
@@ -118,6 +118,11 @@
                 <div v-else>
                   <h5>No transaction history.</h5>
                 </div>
+              </div>
+            </tab-pane>
+            <tab-pane title="Message Box">
+              <div>
+                
               </div>
             </tab-pane>
         </card>
@@ -176,6 +181,10 @@
       }
     },
     methods: {
+      numFilter(value){
+        value = parseFloat(value).toFixed(2)
+        return value
+      },
       handleTabClick(key){
         console.log(this.tabName)
       },
@@ -246,6 +255,7 @@
             this.getAllUser();
             break;
           case 1:
+            this.getHistory();
             break;
         }
       },
