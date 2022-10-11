@@ -366,8 +366,8 @@ export default {
         params: {
           fromAccount: transaction.from,
           toAccount: transaction.to,
-          elecAmount: transaction.amount,
-          elecPrice: transaction.price,
+          elecAmount: transaction.amount + '',
+          elecPrice: transaction.price + '',
         }
       }).then((resp) => {
         console.log(resp)
