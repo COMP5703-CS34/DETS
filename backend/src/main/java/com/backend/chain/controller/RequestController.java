@@ -1,7 +1,5 @@
 package com.backend.chain.controller;
 
-
-
 import com.backend.chain.entity.Request;
 import com.backend.chain.response.Response;
 import com.backend.chain.response.ResponseFactory;
@@ -20,25 +18,27 @@ public class RequestController {
     RequestService requestService;
 
     @PostMapping("api/add")
-    public Response addRequest(Request req){
+    public Response addRequest(Request req) {
         requestService.addRequest(req);
         return ResponseFactory.buildSuccessResult("Request Added!");
     }
+
     @GetMapping("api/del/{id}")
-    public Response delRequest(@PathVariable Integer id){
+    public Response delRequest(@PathVariable Integer id) {
         requestService.deleteRequest(id);
         return ResponseFactory.buildSuccessResult("Request Deleted!");
     }
+
     @PostMapping("api/update")
-    public Response updateRequest(Request req){
-        requestService.updateRequest(req.getId(),req.getStatus());
+    public Response updateRequest(Request req) {
+        requestService.updateRequest(req.getId(), req.getPrice(),req.getBargainingUser(), req.getStatus());
         return ResponseFactory.buildSuccessResult("Request Updated!");
     }
+
     @GetMapping("api/query/{userid}")
-    public Response addRequest(@PathVariable String userid){
-        List<Request> list=requestService.getAllByUser(userid);
+    public Response addRequest(@PathVariable String userid) {
+        List<Request> list = requestService.getAllByUser(userid);
         return ResponseFactory.buildSuccessResult(list);
     }
-
 
 }

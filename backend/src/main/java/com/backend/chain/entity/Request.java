@@ -4,11 +4,12 @@ public class Request {
     private Integer id;
     private String from;
     private String to;
+    private String bargainingUser;
     private Boolean type;
     private String amount;
-    private String price;
-    private String createTime;
-    private String updateTime;
+    private Double price;
+    private Integer createTime;
+    private Integer updateTime;
     private int status;
 
     public Integer getId() {
@@ -51,11 +52,11 @@ public class Request {
         this.amount = amount;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -67,19 +68,27 @@ public class Request {
         this.status = status;
     }
 
-    public void setCreateTime(String createTime){
+    public void setCreateTime(Integer createTime){
         this.createTime = createTime;
     }
 
-    public String getCreateTime(){
+    public Integer getCreateTime(){
         return createTime;
     }
 
-    public void setUpdateTime(String updateTime){
+    public void setUpdateTime(Integer updateTime){
         this.updateTime = updateTime;
     }
 
-    public String getUpdateTime(){
+    public Integer getUpdateTime(){
         return updateTime;
+    }
+
+    public String getBargainingUser() {
+        return bargainingUser;
+    }
+
+    public void setBargainingUser(String bargainingUser) {
+        this.bargainingUser = bargainingUser;
     }
 }

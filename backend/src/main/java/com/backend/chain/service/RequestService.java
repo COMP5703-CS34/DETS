@@ -6,7 +6,10 @@ import java.util.List;
 
 public interface RequestService {
     int addRequest(Request req);
+
     List<Request> getAllByUser(String userId);
-    int updateRequest(int id, int status);
+
+    int updateRequest(int id, double price, String bargainingUser, int status);
+
     int deleteRequest(int id);
 }

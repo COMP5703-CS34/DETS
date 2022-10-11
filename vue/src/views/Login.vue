@@ -13,26 +13,18 @@
         <div class="container pt-lg-md">
             <div class="row justify-content-center">
                 <div class="col-lg-5">
-                    <card type="secondary" shadow
-                          header-classes="bg-white pb-5"
-                          body-classes="px-lg-5 py-lg-5"
-                          class="border-0">
+                    <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
+                        class="border-0">
                         <template>
                             <div class="text-center mb-4">
                                 <h3>Welcome!</h3>
                             </div>
                             <form role="form">
-                                <base-input alternative
-                                            class="mb-3"
-                                            v-model="userInfo.name"
-                                            placeholder="Username"
-                                            addon-left-icon="ni ni-circle-08">
+                                <base-input alternative class="mb-3" v-model="userInfo.name" placeholder="Username"
+                                    addon-left-icon="ni ni-circle-08">
                                 </base-input>
-                                <base-input alternative
-                                            type="password"
-                                            v-model="userInfo.InputPwd"
-                                            placeholder="Password"
-                                            addon-left-icon="ni ni-lock-circle-open">
+                                <base-input alternative type="password" v-model="userInfo.InputPwd"
+                                    placeholder="Password" addon-left-icon="ni ni-lock-circle-open">
                                 </base-input>
                                 <div class="text-center">
                                     <base-button type="primary" class="my-4" @click="signIn">Sign In</base-button>
@@ -48,34 +40,34 @@
 <script>
 import Store from "../Store.js"
 export default {
-    data(){
-        return{
-            userInfo:{
+    data () {
+        return {
+            userInfo: {
                 name: null,
                 InputPwd: null,
                 identity: null
             }
         }
     },
-    created(){
+    created () {
         //this.judge();
     },
-    methods:{
-        judge(){
+    methods: {
+        judge () {
             let tem = Store.getItem("name")
             console.log(tem)
         },
-        signIn(){
+        signIn () {
             this.$axios({
                 method: "post",
                 url: `/login`,
-                params:{
+                params: {
                     name: this.userInfo.name,
                     InputPwd: this.userInfo.InputPwd
                 }
             }).then((resp) => {
                 console.log(resp)
-                if(resp.data.code == 200){
+                if (resp.data.code == 200) {
                     let nameParams = {
                         key: 'dis-elec-tran-name',
                         value: this.userInfo.name,
@@ -88,13 +80,13 @@ export default {
                     }
                     Store.setItem(nameParams)
                     Store.setItem(identityParams)
-                    if(resp.data.result.toUpperCase()=="ADMIN"){
+                    if (resp.data.result.toUpperCase() == "ADMIN") {
                         this.$router.push("/adminmanage")
-                    }else{
+                    } else {
                         this.$router.push("/home")
                     }
                     //this.$router.push("/")
-                }else
+                } else
                     alert("Username or password error!")
             })
         }
@@ -102,4 +94,5 @@ export default {
 };
 </script>
 <style>
+
 </style>
