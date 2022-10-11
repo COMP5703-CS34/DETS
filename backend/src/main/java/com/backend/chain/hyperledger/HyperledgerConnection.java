@@ -1,7 +1,5 @@
 package com.backend.chain.hyperledger;
 
-import org.hyperledger.fabric.chaincode.Account;
-import com.backend.chain.utility.Utility;
 import org.hyperledger.fabric.gateway.*;
 
 import java.nio.file.Path;
@@ -10,8 +8,8 @@ import java.nio.file.Paths;
 
 public class HyperledgerConnection {
 
-    private static final Path NETWORK_CONFIG_PATH = Paths.get("src", "main", "resources", "connection.yaml");
-    private static final Path WALLET_PATH = Paths.get("src", "main", "resources", "wallets");
+    private static final Path NETWORK_CONFIG_PATH = Paths.get("backend","src", "main", "resources", "connection.yaml");
+    private static final Path WALLET_PATH = Paths.get("backend","src", "main", "resources", "wallets");
     private static Gateway gateway = null;
     private static Contract contract = null;
 
