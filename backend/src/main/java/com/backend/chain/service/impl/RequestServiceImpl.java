@@ -6,14 +6,13 @@ import com.backend.chain.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-
 import java.util.List;
 
 @Service
 public class RequestServiceImpl implements RequestService {
     @Autowired
     private RequestDao requestDao;
+
     @Override
     public int addRequest(Request req) {
         return requestDao.addRequest(req);
@@ -25,12 +24,12 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public int updateRequest(int id, int status){
-        return requestDao.updateRequest(id, status);
+    public int updateRequest(int id, double price, String bargainingUser, int status) {
+        return requestDao.updateRequest(id, price, bargainingUser, status);
     }
 
     @Override
-    public int deleteRequest(int id){
+    public int deleteRequest(int id) {
         return requestDao.deleteRequest(id);
     }
 }
