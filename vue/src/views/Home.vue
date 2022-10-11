@@ -124,7 +124,7 @@
               </div>
             </div>
           </tab-pane>
-          <tab-pane title="Pending Transaction">
+          <tab-pane title="Message Box">
             <div>
               <modal :show.sync="bargainingShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
                 <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
