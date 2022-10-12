@@ -15,14 +15,14 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 public class HyperledgerEnrollAdmin {
-    private static final Path WALLET_PATH = Paths.get("src", "main", "resources", "wallets");
+    private static final Path WALLET_PATH = Paths.get("backend","src", "main", "resources", "wallets");
 
     public static void enrollAdmin() throws Exception {
         Properties props = new Properties();
         props.put("pemFile",
-                "../chaincode/vars/keyfiles/peerOrganizations/stateA.elec.com/ca/ca1.stateA.elec.com-cert.pem");
+                "chaincode/vars/keyfiles/peerOrganizations/stateA.elec.com/ca/ca1.stateA.elec.com-cert.pem");
         props.put("allowAllHostNames", "true");
-        HFCAClient caClient = HFCAClient.createNewInstance("https://110.0.2.15:7000", props);
+        HFCAClient caClient = HFCAClient.createNewInstance("https://172.16.123.133:7000", props);
         CryptoSuite cryptoSuite = CryptoSuiteFactory.getDefault().getCryptoSuite();
         caClient.setCryptoSuite(cryptoSuite);
 
