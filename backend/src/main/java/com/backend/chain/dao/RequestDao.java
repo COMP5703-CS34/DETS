@@ -1,7 +1,6 @@
 package com.backend.chain.dao;
 
 import com.backend.chain.entity.Request;
-import com.backend.chain.entity.Request;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

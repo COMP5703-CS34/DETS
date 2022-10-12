@@ -348,6 +348,7 @@ export default {
         params: {
           id: transaction.id,
           price: transaction.price,
+          bargainingUser: '',
           status: 2,
         }
       }).then((resp) => {
@@ -365,8 +366,8 @@ export default {
         params: {
           fromAccount: transaction.from,
           toAccount: transaction.to,
-          elecAmount: transaction.amount,
-          elecPrice: transaction.price,
+          elecAmount: transaction.amount + '',
+          elecPrice: transaction.price + '',
         }
       }).then((resp) => {
         console.log(resp)
@@ -382,6 +383,7 @@ export default {
           params: {
             id: transaction.id,
             price: transaction.price,
+            bargainingUser: '',
             status: 1,
           }
         }).then((resp) => {
