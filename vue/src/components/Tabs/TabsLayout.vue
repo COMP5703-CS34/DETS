@@ -18,7 +18,7 @@ export default {
 </script>
 
 <style>
-    .tab-content{
-        margin-top: 12px;
+    .nav-tabs-wrapper{
+        height: 240px
     }
 </style>
