@@ -272,6 +272,7 @@ export default {
         window.localStorage.removeItem("dis-elec-tran-name")
         window.localStorage.removeItem("dis-elec-tran-identity")
       }
+      this.$router.push("/login")
     },
     async getUserInfo () {
     await this.$axios({
