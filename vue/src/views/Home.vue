@@ -33,6 +33,7 @@
                       <td class="text-center">{{numFilter(user.elecAmount)}}</td>
                       <td class="td-actions text-center">
                         <div v-if="pendingTransactionRequestList.length > 0">
+                          <!-- when user have have pending transaction,can't operate a new transaction -->
                           <span>You have pending transaction,can't operate a new transaction</span>
                         </div>
                         <div v-else>
@@ -124,8 +125,10 @@
               </div>
             </div>
           </tab-pane>
-          <tab-pane title="Message Box">
+          <!-- Pending Transaction tab -->
+          <tab-pane title="Pending Transaction">
               <div>
+                <!-- bargaining dialog -->
               <modal :show.sync="bargainingShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
                 <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
                   class="border-0">
@@ -169,6 +172,7 @@
                       <td class="text-center">{{item.amount}}</td>
                       <td class="text-center">{{item.price}}</td>
                       <td class="td-actions text-center">
+                        <!-- show BARGAINING and CONFIRM button only when current user is bargainingUser -->
                         <button v-show="item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
                           class="btn btn-info btn-sm btn-icon " @click="actionName = true;bargaining(item);">
                           BARGAINING
@@ -302,6 +306,7 @@ export default {
       this.confirmDShow = false;
     })
   },
+  // create new transaction request
   TransactionRequest () {
     this.$axios({
       method: "post",
@@ -313,6 +318,7 @@ export default {
         price: this.transactionInfo.elecPrice,
         createTime: (new Date().getTime() / 1000) | 0,
         updateTime: (new Date().getTime() / 1000) | 0,
+        // change bargaining user to peer user
         bargainingUser: this.userInfo.accountId == this.transactionInfo.fromAccount ? this.transactionInfo.toAccount : this.transactionInfo.fromAccount,
         status: 0,
       }
@@ -344,24 +350,26 @@ export default {
       this.bargainingShow = false;
     })
   },
-    rejectTransaction (transaction) {
-      this.$axios({
-        method: "post",
-        url: `/update`,
-        params: {
-          id: transaction.id,
-          price: transaction.price,
-          bargainingUser: '',
-          status: 2,
-        }
-      }).then((resp) => {
-        console.log(resp)
-        this.clearAllInfo()
-        this.getUserInfo()
-        this.getAllUser()
-        this.getTransactionRequest();
-      })
-    },
+  // reject transaction, set status to 2
+  rejectTransaction (transaction) {
+    this.$axios({
+      method: "post",
+      url: `/update`,
+      params: {
+        id: transaction.id,
+        price: transaction.price,
+        bargainingUser: '',
+        status: 2,
+      }
+    }).then((resp) => {
+      console.log(resp)
+      this.clearAllInfo()
+      this.getUserInfo()
+      this.getAllUser()
+      this.getTransactionRequest();
+    })
+  },
+    // confirm transaction
     confirmTransaction (transaction) {
       this.$axios({
         method: "post",
@@ -418,6 +426,7 @@ export default {
         this.historyList = resp.data.result
       })
     },
+    // get all transaction request
     async getTransactionRequest () {
       await this.$axios({
         method: "get",
@@ -426,6 +435,7 @@ export default {
         console.log(resp)
         console.log(resp.data.result)
         this.transactionRequestList = resp.data.result
+        // get pending transaction request which status is 0
         this.pendingTransactionRequestList = this.transactionRequestList.filter((item) => {
           return item.status == 0
         })
@@ -458,6 +468,7 @@ export default {
       }
     },
     bargaining (transaction) {
+      // show bargaining dialog and set bargaining id, bargaining user, bargaining price
       this.bargainingShow = true;
       this.bargainingId = transaction.id;
       this.bargainingPrice = transaction.price;
