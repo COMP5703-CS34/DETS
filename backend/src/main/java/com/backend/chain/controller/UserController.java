@@ -45,6 +45,14 @@ public class UserController {
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
 
+    @PostMapping("/api/userControl/setPasswd")
+    public Response Update(@RequestParam("name") String accountID,
+                           @RequestParam("password") String password) {
+        byte[] bytes = hyperledgerService.setPassword(accountID,password);
+
+        return ResponseFactory.buildSuccessResult(new String(bytes));
+    }
+
     @PostMapping("/api/userControl/delete")
     public Response Delete(@RequestParam("name") String name) {
 
