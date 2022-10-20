@@ -325,6 +325,10 @@ export default {
       url: `/userInfo/${this.queryName}`
     }).then((resp) => {
       console.log(resp)
+      if(resp.status == 500 || resp.data.code == 500) {
+        alert("Please check your internet and try again.");
+        return;
+      }
       this.userInfo = resp.data.result;
     })
   },
@@ -514,6 +518,10 @@ export default {
         url: `/transaction/queryall/${"useronly"}/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
+        if(resp.status == 500 || resp.data.code == 500) {
+          alert("Please check your internet and try again.");
+          return;
+        }
         console.log(resp.data.result)
         this.userList = resp.data.result
       })
@@ -524,6 +532,10 @@ export default {
         url: `/History/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
+        if(resp.status == 500 || resp.data.code == 500) {
+          alert("Please check your internet and try again.");
+          return;
+        }
         console.log(resp.data.result)
         this.historyList = resp.data.result
       })
@@ -535,6 +547,10 @@ export default {
         url: `/query/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
+        if(resp.status == 500 || resp.data.code == 500) {
+          alert("Please check your internet and try again.");
+          return;
+        }
         console.log(resp.data.result)
         this.transactionRequestList = resp.data.result
         // get pending transaction request which status is 0
