@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/api/userControl/setPasswd")
-    public Response Update(@RequestParam("name") String accountID,
+    public Response setPassword(@RequestParam("name") String accountID,
                            @RequestParam("password") String password) {
         byte[] bytes = hyperledgerService.setPassword(accountID,password);
 
