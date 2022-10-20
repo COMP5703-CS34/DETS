@@ -92,11 +92,11 @@ public class HyperledgerService {
         return bytes;
     }
 
-    public byte[] updateUser(String name, String elecAmount, String balance, String password, String identity) {
+    public byte[] updateUser(String name, String elecAmount, String balance, String identity) {
         byte[] bytes = NO_OBJECT_WARNING.getBytes();
 
         try {
-            bytes = contract.submitTransaction("update", name, elecAmount, balance, password, identity);
+            bytes = contract.submitTransaction("update", name, elecAmount, balance, identity);
         } catch (Exception e) {
             e.printStackTrace();
         }
