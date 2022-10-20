@@ -18,6 +18,8 @@ function setItem(params) {
 // 取值
 function getItem(key) {
     let options = JSON.parse(localStorage.getItem(key));
+    if (!options || options.length == 0)
+        return null;
     console.log("getItem: " + options)
     // 设置了过期时间
     if ( options.validity != null && options.validity > 0 ) {
@@ -47,5 +49,6 @@ function removeItem(key){
 
 export default{
     setItem,
-    getItem
+    getItem,
+    removeItem
 }

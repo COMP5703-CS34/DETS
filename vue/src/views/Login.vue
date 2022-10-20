@@ -20,14 +20,16 @@
                                 <h3>Welcome!</h3>
                             </div>
                             <form role="form">
-                                <base-input alternative class="mb-3" v-model="userInfo.name" placeholder="Username"
-                                    addon-left-icon="ni ni-circle-08">
+                                <span id="errorMessage" v-show = "!valid">{{error.message}}</span>
+                                <base-input alternative class="mb-3" v-model="userInfo.name" v-on:input="inputMonitor"
+                                    placeholder="Username" addon-left-icon="ni ni-circle-08" :required="true">
                                 </base-input>
                                 <base-input alternative type="password" v-model="userInfo.InputPwd"
-                                    placeholder="Password" addon-left-icon="ni ni-lock-circle-open">
+                                    placeholder="Password" addon-left-icon="ni ni-lock-circle-open" :required="true">
                                 </base-input>
                                 <div class="text-center">
-                                    <base-button type="primary" class="my-4" @click="signIn">Sign In</base-button>
+                                    <base-button type="primary" class="my-4" @click="signIn" 
+                                    :disabled="!valid">Sign In</base-button>
                                 </div>
                             </form>
                         </template>
@@ -46,17 +48,16 @@ export default {
                 name: null,
                 InputPwd: null,
                 identity: null
+            },
+            nameValid: {
+                value: true
+            },
+            error: {
+                message: null
             }
         }
     },
-    created () {
-        //this.judge();
-    },
     methods: {
-        judge () {
-            let tem = Store.getItem("name")
-            console.log(tem)
-        },
         signIn () {
             this.$axios({
                 method: "post",
@@ -85,14 +86,37 @@ export default {
                     } else {
                         this.$router.push("/home")
                     }
-                    //this.$router.push("/")
                 } else
                     alert("Username or password error!")
             })
+        },
+        inputMonitor(res){
+            if(res == null || res == ""){                 //empty input
+                this.$set(this.nameValid, "value", false);
+                this.$set(this.error, "message", "Input can not be empty.");
+                console.log("null")
+            } else {
+                var c = res.charAt(0).charCodeAt()
+                if(c < 65 || c > 90){
+                    this.$set(this.nameValid, "value", false);
+                    this.$set(this.error, "message", "The first letter must be a capital letter!");
+                }else {
+                    this.$set(this.nameValid, "value", true);
+                    this.$set(this.error, "message", null);
+                }
+            }        
+        }
+    },
+    computed: {
+        valid:function(){
+            return this.nameValid.value
         }
     }
 };
 </script>
 <style>
-
+    #errorMessage{
+        color: red;
+        margin-bottom: 10px;
+    }
 </style>

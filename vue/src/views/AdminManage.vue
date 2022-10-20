@@ -52,6 +52,7 @@
                           <base-button type="primary" class="my-4" 
                           @click="confirmDShow = true; 
                             actionName = true;
+                            accountInfo.name = accountInfo.name.slice(0,1).toUpperCase() + accountInfo.name.slice(1);
                             accountInfo.password = accountInfo.name + `pwd`; 
                             accountInfo.adminID = adminName; 
                             accountInfo.identity = (radio.radio1 === 'radio_user')?'User':'Admin' ">
@@ -232,7 +233,9 @@
         }
     },
     created() {
-      this.hasCache();
+      if(! Store.getItem("dis-elec-tran-name")){
+          this.$router.push("/")
+        }
       this.getAllUser();
     },
     filters: {
@@ -245,19 +248,13 @@
         value = parseFloat(value).toFixed(2)
         return value
       },
-      hasCache(){
-          console.log(Store.getItem("dis-elec-tran-name"))
-          if(Store.getItem("dis-elec-tran-name") == null){
-              this.$router.push("/login")
-          }
-      },
       logOut(){
         if(Store.getItem("dis-elec-tran-name") != null){
           window.localStorage.removeItem("dis-elec-tran-name")
           window.localStorage.removeItem("dis-elec-tran-identity")
         }
         
-        this.$router.push("/login")
+        this.$router.push("/")
       },
       async getAllUser() {
         await this.$axios({

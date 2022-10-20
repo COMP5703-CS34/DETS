@@ -247,10 +247,14 @@ export default {
     }
   },
   created () {
-    this.getUserInfo();
-    this.hasCache();
-    this.getAllUser();
-    this.getTransactionRequest();
+    // check if the user has login and not logged out
+    if(! Store.getItem("dis-elec-tran-name")){
+        this.$router.push("/")
+    } else {
+      this.getUserInfo();
+      this.getAllUser();
+      this.getTransactionRequest();
+    }
   },
   filters: {
     nullValue (str) {
@@ -262,21 +266,12 @@ export default {
       value = parseFloat(value).toFixed(2)
       return value
     },
-    handleTabClick(key){
-      console.log(this.tabName)
-    },
-    hasCache(){
-        console.log(Store.getItem("dis-elec-tran-name"))
-        if(Store.getItem("dis-elec-tran-name") == null){
-            this.$router.push("/login")
-        }
-    },
     logOut(){
       if(Store.getItem("dis-elec-tran-name") != null){
-        window.localStorage.removeItem("dis-elec-tran-name")
-        window.localStorage.removeItem("dis-elec-tran-identity")
+        Store.removeItem("dis-elec-tran-name")
+        Store.removeItem("dis-elec-tran-identity")
       }
-      this.$router.push("/login")
+      this.$router.push("/")
     },
     async getUserInfo () {
     await this.$axios({
