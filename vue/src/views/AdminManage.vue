@@ -288,15 +288,24 @@
           }
         }).then((resp) => {
           console.log(resp)
-          this.clearAllInfo()
-          this.getAllUser()
-          this.confirmDShow = false;
-          if(this.actionName){
-            // add
-            this.addDShow = false;
-          }else{
-            //update
-            this.updateDShow = false;
+          if(resp.status == 500 || resp.data.code == 500) {
+            alert("Please check your internet and try again.");
+            return;
+          }
+          if(resp.data.code == 200) {
+            this.clearAllInfo()
+            this.getAllUser()
+            this.confirmDShow = false;
+            if(this.actionName){
+              // add
+              this.addDShow = false;
+            }else{
+              //update
+              this.updateDShow = false;
+            }
+            alert("Success");
+          }else {
+            alert("Some error occurs. Pleas try again.")
           }
         })
       },
@@ -309,9 +318,18 @@
           }
         }).then((resp) => {
           console.log(resp)
-          this.clearAllInfo()
-          this.getAllUser()
-          this.removeDShow = false;
+          if(resp.status == 500 || resp.data.code == 500) {
+            alert("Please check your internet and try again.");
+            return;
+          }
+          if(resp.data.code == 200) {
+            this.clearAllInfo()
+            this.getAllUser()
+            this.removeDShow = false;
+            alert("Success");
+          }else {
+            alert("Some error occurs. Pleas try again.")
+          }
         })
       },
       clearAllInfo(){
