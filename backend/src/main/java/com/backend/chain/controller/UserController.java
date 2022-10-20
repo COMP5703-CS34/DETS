@@ -38,9 +38,8 @@ public class UserController {
     public Response Update(@RequestParam("name") String accountID,
                            @RequestParam("elecAmount") String elecAmount,
                            @RequestParam("balance") String balance,
-                           @RequestParam("password") String password,
                            @RequestParam("identity") String identity) {
-        byte[] bytes = hyperledgerService.updateUser(accountID, elecAmount, balance, password, identity);
+        byte[] bytes = hyperledgerService.updateUser(accountID, elecAmount, balance, identity);
 
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
