@@ -159,7 +159,6 @@
                             <base-button type="primary" class="my-4" 
                             @click="confirmDShow = true; 
                               actionName = false;
-                              accountInfo.password = accountInfo.name + `pwd`; 
                               accountInfo.adminID = adminName; 
                               accountInfo.identity = (radio.radio2 === 'radio_user')?'User':'Admin' ">
                             Update
@@ -282,7 +281,7 @@
             name: this.accountInfo.name,
             elecAmount: this.accountInfo.elecAmount,
             balance: this.accountInfo.balance,
-            password: this.accountInfo.password,
+            password: this.action ? this.accountInfo.password: null,
             identity: this.accountInfo.identity,
             adminID: this.accountInfo.adminID
           }
