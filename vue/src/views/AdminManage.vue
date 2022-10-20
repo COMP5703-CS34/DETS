@@ -261,6 +261,10 @@
           url: `/transaction/queryall/${"all"}/${this.adminName}`
         }).then((resp) => {
           console.log(resp)
+          if(resp.status == 500 || resp.data.code == 500) {
+            alert("Please check your internet and try again.");
+            return;
+          }
           console.log(resp.data.result)
           this.userList = resp.data.result
         })
