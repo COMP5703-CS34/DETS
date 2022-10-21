@@ -89,8 +89,10 @@ export default {
                 } else
                     alert("Username or password error!");
                 return;
-            })
-            alert("Please check your internet and try again.");
+            }).catch(function (error) {
+                console.log(error);
+                alert("Please check your internet and try again.");
+            });
         },
         inputMonitor(res){
             if(res == null || res == ""){                 //empty input
