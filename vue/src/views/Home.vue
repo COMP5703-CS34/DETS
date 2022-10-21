@@ -538,7 +538,10 @@ export default {
         console.log(resp)
 
         if(resp.data.code == 200)
-          this.historyList = resp.data.result
+          // get history which is not marked deleted
+          this.historyList = resp.data.result.filter((item) => {
+              return item.isDeleted == false
+          })   
         else
           alert("Some error occurs. Pleas try again.");
         return;
@@ -572,17 +575,28 @@ export default {
     getTabIndex (res) {
       switch (res) {
         case 0:
+          this.newPwd.first = null;
+          this.newPwd.check = null;
+          this.newPwd.valid = true;
           this.getAllUser();
           this.getTransactionRequest();
           break;
         case 1:
+          this.newPwd.first = null;
+          this.newPwd.check = null;
+          this.newPwd.valid = true;
           this.getHistory();
           break;
         case 2:
+          this.newPwd.first = null;
+          this.newPwd.check = null;
+          this.newPwd.valid = true;
           this.getTransactionRequest();
           break;
         case 3:
           this.newPwd.first = null;
+          this.newPwd.check = null;
+          this.newPwd.valid = true;
           break;
       }
     },
@@ -624,6 +638,9 @@ export default {
         console.log(resp)
         this.loadingShow = false;
         if(resp.data.code == 200) {
+          this.newPwd.first = null;
+          this.newPwd.check = null;
+          this.newPwd.valid = true;
           alert("You have successfully set new password!");
         } else {
           alert("Some error occurs. Pleas try again.")
@@ -657,7 +674,7 @@ export default {
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError, "message", "Input can not be empty.");
         console.log("null")
-      } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
+      } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError, "message", "Please enter a positive integer.");
         console.log("invalid")
