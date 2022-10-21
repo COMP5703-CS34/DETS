@@ -32,13 +32,13 @@
                       <td class="text-center">{{user.accountId}}</td>
                       <td class="text-center">{{numFilter(user.elecAmount)}}</td>
                       <td class="td-actions text-center">
-                        <div v-if="pendingTransactionRequestList.length > 0">
+                        <div v-if="pendingTransactionRequestList.length > 0 && pendingTransactionRequestList[0].status == 0">
                           <!-- when user have have pending transaction,can't operate a new transaction -->
                           <span>You have pending transaction,can't operate a new transaction</span>
                         </div>
                         <div v-else>
                           <button type="button" rel="tooltip" class="btn btn-info btn-icon " 
-                            @click="actionName = true; transDialog(user.accountId)">
+                            @click="actionName = true; checkInfo = user.elecAmount; transDialog(user.accountId)">
                           BUY
                         </button>
                         <button type="button" rel="tooltip" class="btn btn-success btn-icon " 
@@ -64,15 +64,17 @@
                       <h3>Transaction</h3>
                     </div>
                     <form role="form">
-                      <base-input alternative type="number" v-model="transactionInfo.elecAmount" placeholder="Amount"
+                      <span id="errorMessage" v-show = "! amountValid">{{amountError.message}}</span>
+                      <base-input alternative type="number" v-model="transactionInfo.elecAmount" placeholder="Amount" v-on:input="amountMonitor"
                         addon-left-icon="ni ni-sound-wave">
                       </base-input>
-                      <base-input alternative type="number" v-model="transactionInfo.elecPrice" placeholder="Price"
+                      <span id="errorMessage" v-show = "! priceValid">{{priceError.message}}</span>
+                      <base-input alternative type="number" v-model="transactionInfo.elecPrice" placeholder="Price" v-on:input="priceMonitor"
                         addon-left-icon="ni ni-money-coins">
                       </base-input>
                       <div class="text-center">
-                        <base-button type="primary" class="my-4" @click="transDShow = false; confirmDShow = true">OK
-                        </base-button>
+                        <base-button type="primary" class="my-4" @click="transDShow = false; confirmDShow = true" 
+                        :disabled="(!amountValid)&&(!priceValid)">OK</base-button>
                         <base-button type="primary" class="my-4" @click="transDShow = false; clearAllInfo()">Close
                         </base-button>
                       </div>
@@ -90,7 +92,7 @@
                 <p>Electricity Price: {{this.transactionInfo.elecPrice}}</p>
 
                 <template slot="footer">
-                  <base-button type="primary" @click="TransactionRequest()">Confirm</base-button>
+                  <base-button type="primary" @click="loadingShow = true;TransactionRequest()">Confirm</base-button>
                   <base-button type="link" class="ml-auto" @click="confirmDShow = false; clearAllInfo()">Cancel
                   </base-button>
                 </template>
@@ -141,7 +143,7 @@
                         addon-left-icon="ni ni-money-coins">
                       </base-input>
                       <div class="text-center">
-                        <base-button type="primary" class="my-4" @click="bargainingShow = false;giveNewPrice()">OK
+                        <base-button type="primary" class="my-4" @click="bargainingShow = false;loadingShow = true;giveNewPrice()">OK
                         </base-button>
                         <base-button type="primary" class="my-4" @click="bargainingShow = false; clearAllInfo()">Close
                         </base-button>
@@ -174,15 +176,15 @@
                       <td class="td-actions text-center">
                         <!-- show BARGAINING and CONFIRM button only when current user is bargainingUser -->
                         <button v-show="item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
-                          class="btn btn-info btn-sm btn-icon " @click="actionName = true;bargaining(item);">
+                          class="btn btn-info btn-sm btn-icon " @click="actionName = true; loadingShow = true; bargaining(item);">
                           BARGAINING
                         </button>
                         <button v-show="item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
-                          class="btn btn-success btn-sm btn-icon " @click="actionName = false;confirmTransaction(item)">
+                          class="btn btn-success btn-sm btn-icon " @click="actionName = false; loadingShow = true; confirmTransaction(item)">
                           CONFIRM
                         </button>
                         <button type="button" rel="tooltip" class="btn btn-warning btn-sm btn-icon "
-                          @click="actionName = false;rejectTransaction(item)">
+                          @click="actionName = false; loadingShow = true; rejectTransaction(item)">
                           REJECT
                         </button>
                       </td>
@@ -195,10 +197,38 @@
               </div>
             </div>
           </tab-pane>
+          <!-- User Info -->
+          <tab-pane title="Setting">
+            <div>
+              <form role="form">
+                <span id="errorMessage" v-show = "! pwdValid">The two passwords are not the same.</span>
+                <base-input alternative type="password" v-model="newPwd.first" v-on:input="newPwdFirstMonitor"
+                    placeholder="New Password">
+                </base-input>
+                <base-input alternative type="password" v-model="newPwd.check" v-on:input="newPwdCheckMonitor"
+                    placeholder="Confirm Password">
+                </base-input>
+                <div class="text-center">
+                    <base-button type="primary" class="my-4" @click="loadingShow = true;setNewPassword()" 
+                    :disabled="!pwdValid">Set new Password</base-button>
+                </div>
+              </form>
+            </div>
+          </tab-pane>
         </card>
       </tabs>
     </div>
-
+    <div>
+      <modal :show.sync="loadingShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
+        <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
+          class="border-0">
+          <template>
+              <h5>Processing... </h5>
+              <h5>Please wait a minute.</h5>
+          </template>
+        </card>
+      </modal>
+    </div>
   </div>
 
 </template>
@@ -208,6 +238,7 @@ import Tabs from "@/components/Tabs/Tabs.vue";
 import TabPane from "@/components/Tabs/TabPane.vue";
 import Modal from "@/components/Modal.vue";
 import Store from "../Store.js"
+import { userInfo } from "os";
 export default {
   name: "home",
   components: {
@@ -237,13 +268,28 @@ export default {
         elecAmount: null,
         elecPrice: 1
       },
+      checkInfo: null,
       bargainingPrice: null,
       bargainingId: null,
       userList: [],
       historyList: [],
       bargainingUser: null,
       transactionRequestList: [],
-      pendingTransactionRequestList: []
+      pendingTransactionRequestList: [],
+      amountError: {
+        valid: null,
+        message: null
+      },
+      priceError: {
+        valid: null,
+        message: null
+      },
+      newPwd: {
+        first: null,
+        check: null,
+        valid: true
+      },
+      loadingShow: false,
     }
   },
   created () {
@@ -279,8 +325,14 @@ export default {
       url: `/userInfo/${this.queryName}`
     }).then((resp) => {
       console.log(resp)
-      this.userInfo = resp.data.result;
-    })
+      if(resp.data.code == 200 && resp.data.result != null)
+        this.userInfo = resp.data.result;
+      else 
+        alert("Error. Not able to get user infomation.")
+    }).catch(function (error) {
+      console.log(error);
+      alert("Please check your network connection and try again.");
+    });
   },
   Transaction () {
     this.$axios({
@@ -294,12 +346,23 @@ export default {
       }
     }).then((resp) => {
       console.log(resp)
-      this.clearAllInfo()
-      this.getUserInfo()
-      this.getAllUser()
-      this.getTransactionRequest();
-      this.confirmDShow = false;
-    })
+      this.loadingShow = false;
+      
+      if(resp.data.code == 200) {
+        this.clearAllInfo()
+        this.getUserInfo()
+        this.getAllUser()
+        this.getTransactionRequest();
+        this.confirmDShow = false;
+        alert("Sucess!")
+      } else {
+        alert("Some error occurs. Pleas try again.")
+      }
+    }).catch(function (error) {
+      console.log(error);
+      this.loadingShow = false;
+      alert("Please check your network connection and try again.");
+    });
   },
   // create new transaction request
   TransactionRequest () {
@@ -319,12 +382,22 @@ export default {
       }
     }).then((resp) => {
       console.log(resp)
-      this.clearAllInfo()
-      this.getUserInfo()
-      this.getAllUser()
-      this.getTransactionRequest();
-      this.confirmDShow = false;
-    })
+      this.loadingShow = false;
+      if(resp.data.code == 200) {
+        this.clearAllInfo()
+        this.getUserInfo()
+        this.getAllUser()
+        this.getTransactionRequest();
+        this.confirmDShow = false;
+        alert("Success")
+      } else {
+        alert("Some error occurs. Pleas try again.")
+      }
+    }).catch(function (error) {
+      console.log(error);
+      this.loadingShow = false;
+      alert("Please check your network connection and try again.");
+    });
   },
   giveNewPrice () {
     this.$axios({
@@ -338,12 +411,22 @@ export default {
       }
     }).then((resp) => {
       console.log(resp)
-      this.clearAllInfo()
-      this.getUserInfo()
-      this.getAllUser()
-      this.getTransactionRequest();
-      this.bargainingShow = false;
-    })
+      this.loadingShow = false;
+      if(resp.data.code == 200) {
+        this.clearAllInfo()
+        this.getUserInfo()
+        this.getAllUser()
+        this.getTransactionRequest();
+        this.bargainingShow = false;
+        alert("Success")
+      } else {
+        alert("Some error occurs. Pleas try again.")
+      }
+    }).catch(function (error) {
+      console.log(error);
+      this.loadingShow = false;
+      alert("Please check your network connection and try again.");
+    });
   },
   // reject transaction, set status to 2
   rejectTransaction (transaction) {
@@ -358,11 +441,22 @@ export default {
       }
     }).then((resp) => {
       console.log(resp)
-      this.clearAllInfo()
-      this.getUserInfo()
-      this.getAllUser()
-      this.getTransactionRequest();
-    })
+      this.loadingShow = false;
+
+      if(resp.data.code == 200) {
+        this.clearAllInfo()
+        this.getUserInfo()
+        this.getAllUser()
+        this.getTransactionRequest();
+        alert("Success")
+      } else {
+        alert("Some error occurs. Pleas try again.")
+      }
+    }).catch(function (error) {
+      console.log(error);
+      this.loadingShow = false;
+      alert("Please check your network connection and try again.");
+    });
   },
     // confirm transaction
     confirmTransaction (transaction) {
@@ -377,29 +471,49 @@ export default {
         }
       }).then((resp) => {
         console.log(resp)
+
+        if(resp.data.code != 200) {
+          alert("The transaction was unsuccessful. \nTo ensure that your other transactions can go smoothly, this request has been automatically closed.");
+          this.rejectTransaction(transaction);
+          return;
+        }
         this.clearAllInfo()
         this.getUserInfo()
         this.getAllUser()
         this.getTransactionRequest();
+        if (resp.data.code == 200) {
+          // transaction success
+          this.$axios({
+            method: "post",
+            url: `/update`,
+            params: {
+              id: transaction.id,
+              price: transaction.price,
+              bargainingUser: '',
+              status: 1,
+            }
+          }).then((resp) => {
+            console.log(resp)
+            this.loadingShow = false;
 
-        // transaction success
-        this.$axios({
-          method: "post",
-          url: `/update`,
-          params: {
-            id: transaction.id,
-            price: transaction.price,
-            bargainingUser: '',
-            status: 1,
-          }
-        }).then((resp) => {
-          console.log(resp)
-          this.clearAllInfo()
-          this.getUserInfo()
-          this.getAllUser()
-          this.getTransactionRequest();
-        })
-      })
+            if(resp.data.code == 200) {
+              this.clearAllInfo()
+              this.getUserInfo()
+              this.getAllUser()
+              this.getTransactionRequest();
+              alert("Success")
+            } else {
+              alert("Some error occurs. Pleas try again.")
+            }
+          })
+        } else {
+          alert("Some error occurs. Pleas try again.")
+        }
+      }).catch(function (error) {
+        console.log(error);
+        this.loadingShow = false;
+        alert("Please check your network connection and try again.");
+      });
     },
     async getAllUser () {
       await this.$axios({
@@ -407,9 +521,14 @@ export default {
         url: `/transaction/queryall/${"useronly"}/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
-        console.log(resp.data.result)
-        this.userList = resp.data.result
-      })
+        if(resp.data.code == 200)
+          this.userList = resp.data.result
+        else
+          alert("Some error occurs. Pleas try again.");
+      }).catch(function (error) {
+        console.log(error);
+        alert("Please check your network connection and try again.");
+      });
     },
     async getHistory () {
       await this.$axios({
@@ -417,9 +536,16 @@ export default {
         url: `/History/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
-        console.log(resp.data.result)
-        this.historyList = resp.data.result
-      })
+
+        if(resp.data.code == 200)
+          this.historyList = resp.data.result
+        else
+          alert("Some error occurs. Pleas try again.");
+        return;
+      }).catch(function (error) {
+        console.log(error);
+        alert("Please check your network connection and try again.");
+      });
     },
     // get all transaction request
     async getTransactionRequest () {
@@ -428,13 +554,20 @@ export default {
         url: `/query/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
-        console.log(resp.data.result)
-        this.transactionRequestList = resp.data.result
-        // get pending transaction request which status is 0
-        this.pendingTransactionRequestList = this.transactionRequestList.filter((item) => {
-          return item.status == 0
-        })
-      })
+
+        if(resp.data.code == 200) {
+          this.transactionRequestList = resp.data.result
+          // get pending transaction request which status is 0
+          this.pendingTransactionRequestList = this.transactionRequestList.filter((item) => {
+            return item.status == 0
+          })
+        } else {
+          alert("Some error occurs. Pleas try again.");
+        }
+      }).catch(function (error) {
+        console.log(error);
+        alert("Please check your network connection and try again.");
+      });
     },
     getTabIndex (res) {
       switch (res) {
@@ -447,6 +580,9 @@ export default {
           break;
         case 2:
           this.getTransactionRequest();
+          break;
+        case 3:
+          this.newPwd.first = null;
           break;
       }
     },
@@ -475,6 +611,101 @@ export default {
       this.transactionInfo.elecAmount = null;
       this.bargainingPrice = null;
       this.bargainingId = null;
+    },
+    setNewPassword(){
+      this.$axios({
+        method: "post",
+        url: `/userControl/setPasswd`,
+        params:{
+          name: this.queryName,
+          password: this.newPwd.first
+        }
+      }).then((resp) => {
+        console.log(resp)
+        this.loadingShow = false;
+        if(resp.data.code == 200) {
+          alert("You have successfully set new password!");
+        } else {
+          alert("Some error occurs. Pleas try again.")
+        }
+      }).catch(function (error) {
+        console.log(error);
+        this.loadingShow = false;
+        alert("Please check your network connection and try again.");
+      });
+    },
+    newPwdFirstMonitor(res){
+      if(this.newPwd.first != null && this.newPwd.check != null && this.newPwd.check != res) {
+        this.$set(this.newPwd, "valid", false);
+      } else if (res == "" && this.newPwd.check == "") {
+        this.$set(this.newPwd, "valid", true);
+      } else {
+        this.$set(this.newPwd, "valid", true);
+      }
+    },
+    newPwdCheckMonitor(res){
+      if(this.newPwd.first != null && this.newPwd.check != null && this.newPwd.first != res) {
+        this.$set(this.newPwd, "valid", false);
+      } else if (res == "" && this.newPwd.first == "") {
+        this.$set(this.newPwd, "valid", true);
+      } else {
+        this.$set(this.newPwd, "valid", true);
+      }
+    },
+    amountMonitor(res){
+      if(res == null || res == ""){                 //empty input
+        this.$set(this.amountError, "valid", false);
+        this.$set(this.amountError, "message", "Input can not be empty.");
+        console.log("null")
+      } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
+        this.$set(this.amountError, "valid", false);
+        this.$set(this.amountError, "message", "Please enter a positive integer.");
+        console.log("invalid")
+      } else if (this.actionName && res > this.checkInfo) {           //out of stock
+        this.$set(this.amountError, "valid", false);
+        this.$set(this.amountError,"message", "Not enough amount, max: " + this.checkInfo);
+        console.log("invalid")
+      } else if (!this.actionName && res > this.userInfo.elecAmount) {
+        this.$set(this.amountError, "valid", false);
+        this.$set(this.amountError,"message", "Not enough amount, max: " + this.userInfo.elecAmount);
+      } else if (this.actionName && res * this.transactionInfo.elecPrice > this.userInfo.balance) {
+        this.$set(this.amountError, "valid", false);
+        this.$set(this.amountError,"message", "Not enough money, please note your balance.");
+      } else {
+        this.$set(this.amountError, "valid", true);
+        console.log("valid")
+      }
+      console.log(res)
+    },
+    priceMonitor(res){
+      if(res == null || res == ""){                 //empty input
+        this.$set(this.priceError, "valid", false);
+        this.$set(this.priceError, "message", "Input can not be empty.");
+        console.log("null")
+      } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
+        this.$set(this.priceError, "valid", false);
+        this.$set(this.priceError, "message", "Please enter a positive integer.");
+        console.log("invalid")
+      } else if (this.actionName && res * this.transactionInfo.elecPrice > this.userInfo.balance) {           //out of stock
+        this.$set(this.priceError, "valid", false);
+        this.$set(this.priceError,"message", "Not enough money, please note your balance. ");
+        console.log("invalid")
+      }  else {
+        this.$set(this.priceError, "valid", true);
+        console.log("valid")
+      }
+      console.log(res)
+    }
+  },
+  computed: {
+    pwdValid:function(){
+      return this.newPwd.valid
+    },
+    amountValid:function(){
+      return this.amountError.valid
+    },
+    priceValid:function(){
+      return this.priceError.valid
     }
   }
 };
@@ -498,7 +729,7 @@ export default {
   margin-right: 70px;
   width: 30%;
   float: right;
-  padding-left: 8%;
+  padding-left: 3%;
   text-align: right;
   vertical-align: auto;
 }

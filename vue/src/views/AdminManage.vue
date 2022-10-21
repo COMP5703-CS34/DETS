@@ -30,17 +30,23 @@
                                   placeholder="Name"
                                   addon-left-icon="ni ni-sound-wave" :required="true">
                       </base-input>
+                      <span id="errorMessage" v-show = "! amountValid">{{amountError.message}}</span>
                       <base-input alternative
                                   type="number"
                                   v-model="accountInfo.elecAmount"
                                   placeholder="Amount"
-                                  addon-left-icon="ni ni-sound-wave" :required="true">
+                                  addon-left-icon="ni ni-sound-wave" 
+                                  v-on:input="amountMonitor"
+                                  :required="true">
                       </base-input>
+                      <span id="errorMessage" v-show = "! priceValid">{{priceError.message}}</span>
                       <base-input alternative
                                   type="number"
                                   v-model="accountInfo.balance"
                                   placeholder="Balance"
-                                  addon-left-icon="ni ni-sound-wave" :required="true">
+                                  addon-left-icon="ni ni-sound-wave" 
+                                  v-on:input="priceMonitor"
+                                  :required="true">
                       </base-input>
                       <base-radio name="radio_user" class="mb-3" v-model="radio.radio1">
                           User
@@ -55,7 +61,8 @@
                             accountInfo.name = accountInfo.name.slice(0,1).toUpperCase() + accountInfo.name.slice(1);
                             accountInfo.password = accountInfo.name + `pwd`; 
                             accountInfo.adminID = adminName; 
-                            accountInfo.identity = (radio.radio1 === 'radio_user')?'User':'Admin' ">
+                            accountInfo.identity = (radio.radio1 === 'radio_user')?'User':'Admin' "
+                          :disabled="accountInfo.name == null || accountInfo.elecAmount == null || accountInfo.balance == null">
                           Add
                         </base-button>
                           <base-button type="primary" class="my-4" @click="addDShow = false; clearAllInfo()">Close</base-button>
@@ -92,6 +99,7 @@
                         @click="actionName = false;
                           updateDShow = true;
                           accountInfo.name = user.accountId;
+                          accountInfo.password = null; 
                           accountInfo.elecAmount = user.elecAmount;
                           accountInfo.balance = user.balance;
                           radio.radio1= (user.identity === 'User')?'radio_user':'radio_admin'">
@@ -112,7 +120,7 @@
               <h6>{{accountInfo.name}}</h6>
               <p>?</p>
               <template slot="footer">
-                  <base-button type="primary" @click="removeUser()">Confirm</base-button>
+                  <base-button type="primary" @click="removeUser(); loadingShow = true">Confirm</base-button>
                   <base-button type="link" class="ml-auto" @click="removeDShow = false; clearAllInfo()">Cancel
                   </base-button>
               </template>
@@ -135,19 +143,25 @@
                                     value="accountInfo.name"
                                     addon-left-icon="ni ni-sound-wave" :required="true" disabled>
                         </base-input>
+                        <span id="errorMessage" v-show = "! amountValid">{{amountError.message}}</span>
                         <base-input alternative
                                     type="number"
                                     v-model="accountInfo.elecAmount"
                                     placeholder="Amount"
                                     value="accountInfo.elecAmount"
-                                    addon-left-icon="ni ni-sound-wave" :required="true">
+                                    addon-left-icon="ni ni-sound-wave" 
+                                    v-on:input="amountMonitor"
+                                    :required="true">
                         </base-input>
+                        <span id="errorMessage" v-show = "! priceValid">{{priceError.message}}</span>
                         <base-input alternative
                                     type="number"
                                     v-model="accountInfo.balance"
                                     placeholder="Balance"
                                     value="accountInfo.balance"
-                                    addon-left-icon="ni ni-sound-wave" :required="true">
+                                    addon-left-icon="ni ni-sound-wave" 
+                                    v-on:input="priceMonitor"
+                                    :required="true">
                         </base-input>
                         <base-radio name="radio_user" class="mb-3" v-model="radio.radio2">
                             User
@@ -159,9 +173,9 @@
                             <base-button type="primary" class="my-4" 
                             @click="confirmDShow = true; 
                               actionName = false;
-                              accountInfo.password = accountInfo.name + `pwd`; 
                               accountInfo.adminID = adminName; 
-                              accountInfo.identity = (radio.radio2 === 'radio_user')?'User':'Admin' ">
+                              accountInfo.identity = (radio.radio2 === 'radio_user')?'User':'Admin' "
+                              :disabled="accountInfo.elecAmount == null || accountInfo.balance == null">
                             Update
                           </base-button>
                             <base-button type="primary" class="my-4" @click="updateDShow = false; clearAllInfo()">Close</base-button>
@@ -185,13 +199,23 @@
             <p>Identity:           {{accountInfo.identity}}</p>
             <p v-show="actionName">Admin ID:           {{accountInfo.adminID}}</p>
             <template slot="footer">
-                <base-button type="primary" @click="userOperation()">Confirm</base-button>
+                <base-button type="primary" @click="userOperation(); loadingShow = true">Confirm</base-button>
                 <base-button type="link" class="ml-auto" @click="confirmDShow = false">Cancel</base-button>
             </template>
           </modal>
       </div>
     </div>
-    
+    <div>
+      <modal :show.sync="loadingShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
+        <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
+          class="border-0">
+          <template>
+              <h5>Processing... </h5>
+              <h5>Please wait a minute.</h5>
+          </template>
+        </card>
+      </modal>
+    </div>
   </div>
   
 </template>
@@ -229,7 +253,16 @@
           radio:{
             radio1: "radio_user",
             radio2: "radio_user"
-          }
+          },
+          loadingShow: false,
+          amountError: {
+            valid: null,
+            message: null
+          },
+          priceError: {
+            valid: null,
+            message: null
+          },
         }
     },
     created() {
@@ -262,9 +295,16 @@
           url: `/transaction/queryall/${"all"}/${this.adminName}`
         }).then((resp) => {
           console.log(resp)
-          console.log(resp.data.result)
-          this.userList = resp.data.result
-        })
+          
+          if(resp.data.code == 200)
+            this.userList = resp.data.result
+          else 
+            alert("Some error occurs. Pleas try again.")
+          return;
+        }).catch(function (error) {
+          console.log(error);
+          alert("Please check your network connection and try again.");
+        });
       },
       userOperation() {
         let u = null
@@ -288,17 +328,28 @@
           }
         }).then((resp) => {
           console.log(resp)
-          this.clearAllInfo()
-          this.getAllUser()
-          this.confirmDShow = false;
-          if(this.actionName){
-            // add
-            this.addDShow = false;
-          }else{
-            //update
-            this.updateDShow = false;
+          this.loadingShow = false;
+          if(resp.data.code == 200) {
+            this.clearAllInfo()
+            this.getAllUser()
+            this.confirmDShow = false;
+            if(this.actionName){
+              // add
+              this.addDShow = false;
+            }else{
+              //update
+              this.updateDShow = false;
+            }
+            alert("Success");
+          }else {
+            alert("Some error occurs. Pleas try again.")
           }
-        })
+          return;
+        }).catch(function (error) {
+          console.log(error);
+          this.loadingShow = false;
+          alert("Please check your network connection and try again.");
+        });
       },
       removeUser(){
         this.$axios({
@@ -309,10 +360,20 @@
           }
         }).then((resp) => {
           console.log(resp)
-          this.clearAllInfo()
-          this.getAllUser()
-          this.removeDShow = false;
-        })
+          this.loadingShow = false;
+          if(resp.data.code == 200) {
+            this.clearAllInfo()
+            this.getAllUser()
+            this.removeDShow = false;
+            alert("Success");
+          }else {
+            alert("Some error occurs. Pleas try again.")
+          }
+        }).catch(function (error) {
+          console.log(error);
+          this.loadingShow = false;
+          alert("Please check your network connection and try again.");
+        });
       },
       clearAllInfo(){
         this.accountInfo.name = null;
@@ -320,6 +381,44 @@
         this.accountInfo.balance = null;
         this.accountInfo.password = null;
         this.accountInfo.identity = null;
+      },
+      amountMonitor(res){
+        if(res == null || res == ""){                 //empty input
+          this.$set(this.amountError, "valid", false);
+          this.$set(this.amountError, "message", "Please enter a positive number.");
+          console.log("null")
+        } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
+          this.$set(this.amountError, "valid", false);
+          this.$set(this.amountError, "message", "Please enter a positive number.");
+          console.log("invalid")
+        } else {
+          this.$set(this.amountError, "valid", true);
+          console.log("valid")
+        }
+        console.log(res)
+      },
+      priceMonitor(res){
+        if(res == null || res == ""){                 //empty input
+          this.$set(this.priceError, "valid", false);
+          this.$set(this.priceError, "message", "Please enter a positive number.");
+          console.log("null")
+        } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
+          this.$set(this.priceError, "valid", false);
+          this.$set(this.priceError, "message", "Please enter a positive number.");
+          console.log("invalid")
+        } else {
+          this.$set(this.priceError, "valid", true);
+          console.log("valid")
+        }
+        console.log(res)
+      }
+    },
+    computed: {
+      amountValid:function(){
+        return this.amountError.valid
+      },
+      priceValid:function(){
+        return this.priceError.valid
       }
     }
   };

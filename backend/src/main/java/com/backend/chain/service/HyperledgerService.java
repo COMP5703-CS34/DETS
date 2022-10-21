@@ -108,7 +108,7 @@ public class HyperledgerService {
         byte[] bytes = NO_OBJECT_WARNING.getBytes();
 
         try {
-            bytes = contract.submitTransaction("setPassword", password);
+            bytes = contract.submitTransaction("setPassword", name, password);
         } catch (Exception e) {
             e.printStackTrace();
         }

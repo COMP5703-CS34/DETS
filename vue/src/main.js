@@ -22,10 +22,12 @@ import Argon from "./plugins/argon-kit";
 import './registerServiceWorker'
 
 var axios = require('axios')
-axios.defaults.baseURL = 'http://localhost:3000/api'
+var default_port = 3000
+axios.defaults.baseURL = `http://localhost:${default_port}/api`
+var myVar=setInterval(function(){urlState()},700);
+
 // 全局注册，之后可在其他组件中通过 this.$axios 发送数据
 Vue.prototype.$axios = axios
-Vue.config.productionTip = false
 
 Vue.config.productionTip = false;
 Vue.use(Argon);
@@ -33,3 +35,24 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount("#app");
+
+function urlState(){
+  if(default_port <= 3010) {
+      axios({
+      method: "get",
+      url: `http://localhost:${default_port}/api/test`
+    }).then((resp) => {
+      console.log(resp)
+      if(resp.status == 200) {
+        axios.defaults.baseURL = resp.config.url.replace("/test", "")
+        clearInterval(myVar);
+        return;
+      }
+    })
+    default_port ++;
+  } else {
+    clearInterval(myVar);
+    alert("Some error occur in server connection. \nPlease contact technists.")
+  }
+  
+}
