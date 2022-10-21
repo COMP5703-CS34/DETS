@@ -24,7 +24,7 @@ import './registerServiceWorker'
 var axios = require('axios')
 var default_port = 3000
 axios.defaults.baseURL = `http://localhost:${default_port}/api`
-var myVar=setInterval(function(){urlState()},300);
+var myVar=setInterval(function(){urlState()},700);
 
 // 全局注册，之后可在其他组件中通过 this.$axios 发送数据
 Vue.prototype.$axios = axios
@@ -40,16 +40,16 @@ function urlState(){
   if(default_port <= 3010) {
       axios({
       method: "get",
-      url: axios.defaults.baseURL +`/test`
+      url: `http://localhost:${default_port}/api/test`
     }).then((resp) => {
       console.log(resp)
       if(resp.status == 200) {
+        axios.defaults.baseURL = resp.config.url.replace("/test", "")
         clearInterval(myVar);
         return;
       }
     })
     default_port ++;
-    axios.defaults.baseURL = `http://localhost:${default_port}/api`
   } else {
     clearInterval(myVar);
     alert("Some error occur in server connection. \nPlease contact technists.")
