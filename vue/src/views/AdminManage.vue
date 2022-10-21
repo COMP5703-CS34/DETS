@@ -261,13 +261,14 @@
           url: `/transaction/queryall/${"all"}/${this.adminName}`
         }).then((resp) => {
           console.log(resp)
-          if(resp.status == 500 || resp.data.code == 500) {
-            alert("Please check your internet and try again.");
-            return;
-          }
-          console.log(resp.data.result)
-          this.userList = resp.data.result
+          
+          if(resp.data.code == 200)
+            this.userList = resp.data.result
+          else
+            alert("Some error occurs. Pleas try again.")
+          return;
         })
+        alert("Please check your internet and try again.");
       },
       userOperation() {
         let u = null
@@ -291,10 +292,6 @@
           }
         }).then((resp) => {
           console.log(resp)
-          if(resp.status == 500 || resp.data.code == 500) {
-            alert("Please check your internet and try again.");
-            return;
-          }
           if(resp.data.code == 200) {
             this.clearAllInfo()
             this.getAllUser()
@@ -310,6 +307,7 @@
           }else {
             alert("Some error occurs. Pleas try again.")
           }
+          return;
         })
       },
       removeUser(){
@@ -334,6 +332,7 @@
             alert("Some error occurs. Pleas try again.")
           }
         })
+        alert("Please check your internet and try again.");
       },
       clearAllInfo(){
         this.accountInfo.name = null;

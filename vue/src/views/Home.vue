@@ -325,12 +325,13 @@ export default {
       url: `/userInfo/${this.queryName}`
     }).then((resp) => {
       console.log(resp)
-      if(resp.status == 500 || resp.data.code == 500) {
-        alert("Please check your internet and try again.");
-        return;
-      }
-      this.userInfo = resp.data.result;
+      if(resp.data.code == 200 && resp.data.result != null)
+        this.userInfo = resp.data.result;
+      else 
+        alert("Error. Not able to get User infomation.")
+      return;
     })
+    alert("Please check your internet and try again.");
   },
   Transaction () {
     this.$axios({
@@ -356,8 +357,9 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-      
+      return;
     })
+    alert("Please check your internet and try again.");
   },
   // create new transaction request
   TransactionRequest () {
@@ -378,10 +380,6 @@ export default {
     }).then((resp) => {
       console.log(resp)
       this.loadingShow = false;
-      if(resp.status == 500 || resp.data.code == 500) {
-        alert("Please check your internet and try again.")
-        return
-      }
       if(resp.data.code == 200) {
         this.clearAllInfo()
         this.getUserInfo()
@@ -392,8 +390,9 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-      
+      return;
     })
+    alert("Please check your internet and try again.");
   },
   giveNewPrice () {
     this.$axios({
@@ -408,10 +407,6 @@ export default {
     }).then((resp) => {
       console.log(resp)
       this.loadingShow = false;
-      if(resp.status == 500 || resp.data.code == 500) {
-        alert("Please check your internet and try again.")
-        return
-      }
       if(resp.data.code == 200) {
         this.clearAllInfo()
         this.getUserInfo()
@@ -422,8 +417,9 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-      
+      return;
     })
+    alert("Please check your internet and try again.");
   },
   // reject transaction, set status to 2
   rejectTransaction (transaction) {
@@ -439,10 +435,7 @@ export default {
     }).then((resp) => {
       console.log(resp)
       loadingShow = false;
-      if(resp.status == 500 || resp.data.code == 500) {
-        alert("Please check your internet and try again.");
-        return;
-      }
+
       if(resp.data.code == 200) {
         this.clearAllInfo()
         this.getUserInfo()
@@ -452,8 +445,9 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-      
+      return;
     })
+    alert("Please check your internet and try again.");
   },
     // confirm transaction
     confirmTransaction (transaction) {
@@ -468,11 +462,7 @@ export default {
         }
       }).then((resp) => {
         console.log(resp)
-        if(resp.status == 500 || resp.data.code == 500) {
-          this.loadingShow = false;
-          alert("Please check your internet and try again.");
-          return;
-        }
+
         if(resp.data.code != 200) {
           alert("The transaction was unsuccessful. \nTo ensure that your other transactions can go smoothly, this request has been automatically closed.");
           this.rejectTransaction(transaction);
@@ -507,10 +497,12 @@ export default {
               alert("Some error occurs. Pleas try again.")
             }
           })
-        } else if(resp.data.code == 400) {
+        } else {
           alert("Some error occurs. Pleas try again.")
         }
+        return;
       })
+      alert("Please check your internet and try again.");
     },
     async getAllUser () {
       await this.$axios({
@@ -518,13 +510,13 @@ export default {
         url: `/transaction/queryall/${"useronly"}/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
-        if(resp.status == 500 || resp.data.code == 500) {
-          alert("Please check your internet and try again.");
-          return;
-        }
-        console.log(resp.data.result)
-        this.userList = resp.data.result
+        if(resp.data.code == 200)
+          this.userList = resp.data.result
+        else
+          alert("Some error occurs. Pleas try again.");
+        return;
       })
+      alert("Please check your internet and try again.");
     },
     async getHistory () {
       await this.$axios({
@@ -532,13 +524,14 @@ export default {
         url: `/History/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
-        if(resp.status == 500 || resp.data.code == 500) {
-          alert("Please check your internet and try again.");
-          return;
-        }
-        console.log(resp.data.result)
-        this.historyList = resp.data.result
+
+        if(resp.data.code == 200)
+          this.historyList = resp.data.result
+        else
+          alert("Some error occurs. Pleas try again.");
+        return;
       })
+      alert("Please check your internet and try again.");
     },
     // get all transaction request
     async getTransactionRequest () {
@@ -547,17 +540,19 @@ export default {
         url: `/query/${this.queryName}`
       }).then((resp) => {
         console.log(resp)
-        if(resp.status == 500 || resp.data.code == 500) {
-          alert("Please check your internet and try again.");
-          return;
+
+        if(resp.data.code == 200) {
+          this.transactionRequestList = resp.data.result
+          // get pending transaction request which status is 0
+          this.pendingTransactionRequestList = this.transactionRequestList.filter((item) => {
+            return item.status == 0
+          })
+        } else {
+          alert("Some error occurs. Pleas try again.");
         }
-        console.log(resp.data.result)
-        this.transactionRequestList = resp.data.result
-        // get pending transaction request which status is 0
-        this.pendingTransactionRequestList = this.transactionRequestList.filter((item) => {
-          return item.status == 0
-        })
+        return;
       })
+      alert("Please check your internet and try again.");
     },
     getTabIndex (res) {
       switch (res) {
@@ -613,16 +608,14 @@ export default {
       }).then((resp) => {
         console.log(resp)
         this.loadingShow = false;
-        if(resp.status == 500 || resp.data.code == 500) {
-          alert("Please check your internet and try again.")
-          return
-        }
         if(resp.data.code == 200) {
           alert("You have successfully set new password!");
         } else {
           alert("Some error occurs. Pleas try again.")
         }
+        return;
       })
+      alert("Please check your internet and try again.");
     },
     newPwdMonitor(res){
       if(newPwd.first != res) {

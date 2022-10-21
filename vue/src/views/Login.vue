@@ -87,8 +87,10 @@ export default {
                         this.$router.push("/home")
                     }
                 } else
-                    alert("Username or password error!")
+                    alert("Username or password error!");
+                return;
             })
+            alert("Please check your internet and try again.");
         },
         inputMonitor(res){
             if(res == null || res == ""){                 //empty input
