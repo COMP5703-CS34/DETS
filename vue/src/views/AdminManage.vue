@@ -345,7 +345,7 @@
             alert("Some error occurs. Pleas try again.")
           }
           return;
-        }).catch(function (error) {
+        }).catch((error) => {
           console.log(error);
           this.loadingShow = false;
           alert("Please check your network connection and try again.");
@@ -369,7 +369,7 @@
           }else {
             alert("Some error occurs. Pleas try again.")
           }
-        }).catch(function (error) {
+        }).catch((error) => {
           console.log(error);
           this.loadingShow = false;
           alert("Please check your network connection and try again.");

@@ -329,7 +329,7 @@ export default {
         this.userInfo = resp.data.result;
       else 
         alert("Error. Not able to get user infomation.")
-    }).catch(function (error) {
+    }).catch((error) => {
       console.log(error);
       alert("Please check your network connection and try again.");
     });
@@ -358,7 +358,7 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-    }).catch(function (error) {
+    }).catch((error) => {
       console.log(error);
       this.loadingShow = false;
       alert("Please check your network connection and try again.");
@@ -393,7 +393,7 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-    }).catch(function (error) {
+    }).catch((error) => {
       console.log(error);
       this.loadingShow = false;
       alert("Please check your network connection and try again.");
@@ -422,7 +422,7 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-    }).catch(function (error) {
+    }).catch((error) => {
       console.log(error);
       this.loadingShow = false;
       alert("Please check your network connection and try again.");
@@ -452,7 +452,7 @@ export default {
       } else {
         alert("Some error occurs. Pleas try again.")
       }
-    }).catch(function (error) {
+    }).catch((error) => {
       console.log(error);
       this.loadingShow = false;
       alert("Please check your network connection and try again.");
@@ -471,7 +471,7 @@ export default {
         }
       }).then((resp) => {
         console.log(resp)
-
+        this.loadingShow = false;
         if(resp.data.code != 200) {
           alert("The transaction was unsuccessful. \nTo ensure that your other transactions can go smoothly, this request has been automatically closed.");
           this.rejectTransaction(transaction);
@@ -495,7 +495,6 @@ export default {
           }).then((resp) => {
             console.log(resp)
             this.loadingShow = false;
-
             if(resp.data.code == 200) {
               this.clearAllInfo()
               this.getUserInfo()
@@ -505,14 +504,16 @@ export default {
             } else {
               alert("Some error occurs. Pleas try again.")
             }
-          })
-        } else {
-          alert("Some error occurs. Pleas try again.")
+          }).catch((error) => {
+            console.log(error);
+            this.loadingShow = false;
+            alert("Please check your network connection and try again.");
+          });
         }
-      }).catch(function (error) {
+      }).catch((error) => {
         console.log(error);
         this.loadingShow = false;
-        alert("Please check your network connection and try again.");
+        alert("Please check your network connection and try again.\n If you have tried several times and you are sure your network is ok, please reject the transaction.");
       });
     },
     async getAllUser () {
