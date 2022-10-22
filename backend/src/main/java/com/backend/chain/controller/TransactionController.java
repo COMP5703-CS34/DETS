@@ -32,7 +32,7 @@ public class TransactionController {
                                   @RequestParam("elecPrice") String elecPrice) {
 
         byte[] bytes = hyperledgerService.makeTransfer(toAccount, fromAccount, elecAmount, elecPrice);
-        if (bytes.toString().isEmpty()) {
+        if (bytes.toString().equals(toAccount) || bytes.toString().equals(fromAccount)) {
             return ResponseFactory.buildFailResult("Illegal Transaction incurred!");
         }
 
