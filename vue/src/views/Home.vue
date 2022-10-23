@@ -152,9 +152,43 @@
                   </template>
                 </card>
               </modal>
+              <modal :show.sync="transactionConfirmShow">
+                <h6 slot="header" class="modal-title" id="modal-title-default">Transaction Confirm</h6>
+
+                <p>Current User: {{this.queryName}}</p>
+                <div v-if="this.transactionItem">
+                  <p v-show="this.transactionItem.to == this.queryName">Buy from: {{this.transactionItem.from}}</p>
+                  <p v-show="this.transactionItem.from == this.queryName">Sell to: {{this.transactionItem.to}}</p>
+                  <p>Electricity Amount: {{this.transactionItem.amount}}</p>
+                  <p>Electricity Price: {{this.transactionItem.price}}</p>
+                </div>
+
+                <template slot="footer">
+                  <base-button type="primary" @click="loadingShow = true; transactionConfirmShow = false; confirmTransaction(transactionItem); ">Confirm</base-button>
+                  <base-button type="link" class="ml-auto" @click="transactionConfirmShow = false; clearAllInfo()">Cancel
+                  </base-button>
+                </template>
+              </modal>
+              <modal :show.sync="transactionRejectShow">
+                <h6 slot="header" class="modal-title" id="modal-title-default">Transaction Reject</h6>
+
+                <p>Current User: {{this.queryName}}</p>
+                <div v-if="this.transactionItem">
+                  <p v-show="this.transactionItem.to == this.queryName">Buy from: {{this.transactionItem.from}}</p>
+                  <p v-show="this.transactionItem.from == this.queryName">Sell to: {{this.transactionItem.to}}</p>
+                  <p>Electricity Amount: {{this.transactionItem.amount}}</p>
+                  <p>Electricity Price: {{this.transactionItem.price}}</p>
+                </div>
+
+                <template slot="footer">
+                  <base-button type="primary" @click="actionName = false; loadingShow = true;transactionRejectShow=false; rejectTransaction(transactionItem)">Confirm</base-button>
+                  <base-button type="link" class="ml-auto" @click="transactionRejectShow = false;">Cancel
+                  </base-button>
+                </template>
+              </modal>
             </div>
             <div>
-              <div v-if="pendingTransactionRequestList.length > 0">
+              <div v-if="transactionRequestList.length > 0">
                 <table class="table">
                   <thead>
                     <tr>
@@ -163,28 +197,32 @@
                       <th class="text-center">To</th>
                       <th class="text-center">Electricity Amount</th>
                       <th class="text-center">Electricity Price</th>
+                      <th class="text-center">Status</th>
                       <th class="text-center">Actions</th>
                     </tr>
                   </thead>
-                  <tbody :key="index" v-for="(item, index) in pendingTransactionRequestList">
+                  <tbody :key="index" v-for="(item, index) in transactionRequestList">
                     <tr>
                       <td class="text-center">{{index+1}}</td>
                       <td class="text-center">{{item.from}}</td>
                       <td class="text-center">{{item.to}}</td>
                       <td class="text-center">{{item.amount}}</td>
                       <td class="text-center">{{item.price}}</td>
+                      <td class="text-center">
+                        {{item.status == 0 ? "Pending" : item.status == 1 ? "Accepted" : "Rejected"}}
+                      </td>
                       <td class="td-actions text-center">
                         <!-- show BARGAINING and CONFIRM button only when current user is bargainingUser -->
-                        <button v-show="item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
+                        <button v-show="item.status == 0 && item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
                           class="btn btn-info btn-sm btn-icon " @click="actionName = true; loadingShow = true; bargaining(item);">
                           BARGAINING
                         </button>
-                        <button v-show="item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
-                          class="btn btn-success btn-sm btn-icon " @click="actionName = false; loadingShow = true; confirmTransaction(item)">
+                        <button v-show="item.status == 0 && item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
+                          class="btn btn-success btn-sm btn-icon " @click="transactionItem=item; transactionConfirmShow = true;">
                           CONFIRM
                         </button>
-                        <button type="button" rel="tooltip" class="btn btn-warning btn-sm btn-icon "
-                          @click="actionName = false; loadingShow = true; rejectTransaction(item)">
+                        <button v-show="item.status == 0" type="button" rel="tooltip" class="btn btn-warning btn-sm btn-icon "
+                          @click="transactionItem=item; transactionRejectShow = true;">
                           REJECT
                         </button>
                       </td>
@@ -290,6 +328,9 @@ export default {
         valid: true
       },
       loadingShow: false,
+      transactionRejectShow: false,
+      transactionItem: null,
+      transactionConfirmShow: false,
     }
   },
   created () {
