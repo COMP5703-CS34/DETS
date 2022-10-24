@@ -1,21 +1,27 @@
 <template>
   <div>
+    <!--Head Section-->
     <div id="head">
       <div id="leftTitle">
         <h1 class="display-3  title">Distributed Electricity Transaction Platform</h1>
       </div>
+      <!--User Infomation Display-->
       <div id="rightInfo">
         <button id="logout" class="btn btn-primary btn-neutral" @click="logOut">Log Out</button>
         <p>Account ID: {{this.userInfo.accountId | nullValue}}</p>
         <p>Electricity Amount: {{numFilter(this.userInfo.elecAmount) | nullValue}}</p>
-        <p>Balance: {{numFilter(this.userInfo.balance) | nullValue}}</p>
+        <p>Balance: {{numFilter(this.userInfo.balance ) | nullValue}}</p>
       </div>
     </div>
+    <!--Body Section-->
     <div>
+      <!--Tabs on the left side of the page.-->
       <tabs fill class="container d-flex" @tabSwitch="getTabIndex($event)">
         <card shadow>
+          <!--Transaction: Show users that is able to transact with. And make buy/sell request.-->
           <tab-pane title="Transaction" name="Transaction">
             <div>
+              <!--If there are available users-->
               <div v-if="userList.length > 0">
                 <table class="table">
                   <thead>
@@ -32,17 +38,18 @@
                       <td class="text-center">{{user.accountId}}</td>
                       <td class="text-center">{{numFilter(user.elecAmount)}}</td>
                       <td class="td-actions text-center">
-                        <div v-if="pendingTransactionRequestList.length > 0 && pendingTransactionRequestList[0].status == 0">
+                        <div v-if="havePending">
                           <!-- when user have have pending transaction,can't operate a new transaction -->
                           <span>You have pending transaction,can't operate a new transaction</span>
                         </div>
+                        <!--Buy / Sell request making.-->
                         <div v-else>
                           <button type="button" rel="tooltip" class="btn btn-info btn-icon " 
-                            @click="actionName = true; checkInfo = user.elecAmount; transDialog(user.accountId)">
+                            @click="transactionActionName = true; checkInfo = user.elecAmount; transDialog(user.accountId)">
                           BUY
                         </button>
                         <button type="button" rel="tooltip" class="btn btn-success btn-icon " 
-                            @click="actionName = false; transDialog(user.accountId)">
+                            @click="transactionActionName = false; transDialog(user.accountId)">
                           SELL
                         </button>
                         </div>
@@ -51,11 +58,13 @@
                   </tbody>
                 </table>
               </div>
+              <!--No available user.-->
               <div v-else>
-                <h5>No other user.</h5>
+                <h5>No other available user.</h5>
               </div>
             </div>
             <div>
+              <!--Request infomation input dialog.-->
               <modal :show.sync="transDShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
                 <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
                   class="border-0">
@@ -82,12 +91,13 @@
                   </template>
                 </card>
               </modal>
+              <!--Request infomation confirm dialog.-->
               <modal :show.sync="confirmDShow">
                 <h6 slot="header" class="modal-title" id="modal-title-default">Transaction Confirm</h6>
 
                 <p>Current User: {{this.queryName}}</p>
-                <p v-show="this.actionName">Buy from: {{this.transactionInfo.fromAccount}}</p>
-                <p v-show="! this.actionName">Sell to: {{this.transactionInfo.toAccount}}</p>
+                <p v-show="this.transactionActionName">Buy from: {{this.transactionInfo.fromAccount}}</p>
+                <p v-show="! this.transactionActionName">Sell to: {{this.transactionInfo.toAccount}}</p>
                 <p>Electricity Amount: {{this.transactionInfo.elecAmount}}</p>
                 <p>Electricity Price: {{this.transactionInfo.elecPrice}}</p>
 
@@ -100,6 +110,7 @@
             </div>
           </tab-pane>
 
+          <!--History on blockchain.-->
           <tab-pane title="History">
             <div>
               <div v-if="historyList.length > 0">
@@ -127,10 +138,11 @@
               </div>
             </div>
           </tab-pane>
+
           <!-- Pending Transaction tab -->
-          <tab-pane title="Pending Transaction">
+          <tab-pane title="Pending">
               <div>
-                <!-- bargaining dialog -->
+              <!-- bargaining dialog -->
               <modal :show.sync="bargainingShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
                 <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
                   class="border-0">
@@ -152,49 +164,40 @@
                   </template>
                 </card>
               </modal>
+              <!--Transaction confirm / reject dialog.-->
               <modal :show.sync="transactionConfirmShow">
-                <h6 slot="header" class="modal-title" id="modal-title-default">Transaction Confirm</h6>
+                <h6 v-show="requestActionName" slot="header" class="modal-title" id="modal-title-default">Trasaction Accept Confirm</h6>
+                <h6 v-show="! requestActionName" slot="header" class="modal-title" id="modal-title-default">Trasaction Reject Confirm</h6>
 
                 <p>Current User: {{this.queryName}}</p>
                 <div v-if="this.transactionItem">
                   <p v-show="this.transactionItem.to == this.queryName">Buy from: {{this.transactionItem.from}}</p>
                   <p v-show="this.transactionItem.from == this.queryName">Sell to: {{this.transactionItem.to}}</p>
-                  <p>Electricity Amount: {{this.transactionItem.amount}}</p>
-                  <p>Electricity Price: {{this.transactionItem.price}}</p>
+                  <p>Electricity Amount: {{numFilter(this.transactionItem.amount)}}</p>
+                  <p>Electricity Price: {{numFilter(this.transactionItem.price)}}</p>
                 </div>
 
                 <template slot="footer">
-                  <base-button type="primary" @click="loadingShow = true; transactionConfirmShow = false; confirmTransaction(transactionItem); ">Confirm</base-button>
+                  <base-button v-show="requestActionName" type="primary" @click="loadingShow = true; transactionConfirmShow = false; confirmTransaction(transactionItem)">Confirm</base-button>
+                  <base-button v-show="!requestActionName" type="primary" @click="loadingShow = true; transactionConfirmShow = false; rejectTransaction(transactionItem)">Reject</base-button>
                   <base-button type="link" class="ml-auto" @click="transactionConfirmShow = false; clearAllInfo()">Cancel
                   </base-button>
                 </template>
               </modal>
-              <modal :show.sync="transactionRejectShow">
-                <h6 slot="header" class="modal-title" id="modal-title-default">Transaction Reject</h6>
-
-                <p>Current User: {{this.queryName}}</p>
-                <div v-if="this.transactionItem">
-                  <p v-show="this.transactionItem.to == this.queryName">Buy from: {{this.transactionItem.from}}</p>
-                  <p v-show="this.transactionItem.from == this.queryName">Sell to: {{this.transactionItem.to}}</p>
-                  <p>Electricity Amount: {{this.transactionItem.amount}}</p>
-                  <p>Electricity Price: {{this.transactionItem.price}}</p>
-                </div>
-
-                <template slot="footer">
-                  <base-button type="primary" @click="actionName = false; loadingShow = true;transactionRejectShow=false; rejectTransaction(transactionItem)">Confirm</base-button>
-                  <base-button type="link" class="ml-auto" @click="transactionRejectShow = false;">Cancel
-                  </base-button>
-                </template>
-              </modal>
             </div>
+            <!--Pending request processing.-->
             <div>
+              <p>Please note: Buy = Buy from me; Sell = Sell to me.</p>
+              <!--If there is any requests including history ones.-->
               <div v-if="transactionRequestList.length > 0">
                 <table class="table">
                   <thead>
                     <tr>
                       <th class="text-center">#</th>
-                      <th class="text-center">From</th>
-                      <th class="text-center">To</th>
+                      <th class="text-center">Creat At</th>
+                      <th class="text-center">Last Update</th>
+                      <th class="text-center">With</th>
+                      <th class="text-center">Request</th>
                       <th class="text-center">Electricity Amount</th>
                       <th class="text-center">Electricity Price</th>
                       <th class="text-center">Status</th>
@@ -202,40 +205,48 @@
                     </tr>
                   </thead>
                   <tbody :key="index" v-for="(item, index) in transactionRequestList">
-                    <tr>
+                    <tr :class="{'highlight': (item.status == 0)}">
                       <td class="text-center">{{index+1}}</td>
-                      <td class="text-center">{{item.from}}</td>
-                      <td class="text-center">{{item.to}}</td>
-                      <td class="text-center">{{item.amount}}</td>
-                      <td class="text-center">{{item.price}}</td>
+                      <td class="text-center" style="word-break:break-all; width:10%;">{{item.createTime | timeFormat}}</td>
+                      <td class="text-center" style="word-break:break-all; width:10%;">{{item.updateTime | timeFormat}}</td>
+                      <td class="text-center">{{(item.from == queryName) ? item.to : item.from}}</td>
+                      <td class="text-center">{{(item.from == queryName) ? "Buy" : "Sell"}}</td>
+                      <td class="text-center">{{numFilter(item.amount)}}</td>
+                      <td class="text-center">{{numFilter(item.price)}}</td>
                       <td class="text-center">
-                        {{item.status == 0 ? "Pending" : item.status == 1 ? "Accepted" : "Rejected"}}
+                        {{item.status == 0 ? "Pending" : item.status == 1 ? "Accepted" : "Rejected/Cancelled"}}
                       </td>
                       <td class="td-actions text-center">
                         <!-- show BARGAINING and CONFIRM button only when current user is bargainingUser -->
                         <button v-show="item.status == 0 && item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
-                          class="btn btn-info btn-sm btn-icon " @click="actionName = true; loadingShow = true; bargaining(item);">
+                          class="btn btn-info btn-sm btn-icon " @click="transactionActionName = true; bargaining(item);">
                           BARGAINING
                         </button>
                         <button v-show="item.status == 0 && item.bargainingUser == userInfo.accountId" type="button" rel="tooltip"
-                          class="btn btn-success btn-sm btn-icon " @click="transactionItem=item; transactionConfirmShow = true;">
+                          class="btn btn-success btn-sm btn-icon " @click="transactionItem=item; transactionConfirmShow = true; requestActionName = true">
                           CONFIRM
                         </button>
-                        <button v-show="item.status == 0" type="button" rel="tooltip" class="btn btn-warning btn-sm btn-icon "
-                          @click="transactionItem=item; transactionRejectShow = true;">
+                        <button v-show="item.status == 0 && item.bargainingUser == userInfo.accountId" type="button" rel="tooltip" class="btn btn-warning btn-sm btn-icon "
+                          @click="transactionItem=item; transactionConfirmShow = true; requestActionName = false">
                           REJECT
+                        </button>
+                        <button v-show="item.status == 0 && item.bargainingUser != userInfo.accountId" type="button" rel="tooltip" class="btn btn-warning btn-sm btn-icon "
+                          @click="transactionItem=item; transactionConfirmShow = true; requestActionName = false">
+                          CANCEL
                         </button>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+              <!--No pending to show.-->
               <div v-else>
                 <h5>No pending transaction.</h5>
               </div>
             </div>
           </tab-pane>
-          <!-- User Info -->
+
+          <!-- Set new password -->
           <tab-pane title="Setting">
             <div>
               <form role="form">
@@ -256,6 +267,8 @@
         </card>
       </tabs>
     </div>
+
+    <!--Loading dialog.-->
     <div>
       <modal :show.sync="loadingShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
         <card type="secondary" shadow header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5"
@@ -286,20 +299,20 @@ export default {
   },
   data () {
     return {
-      transDShow: false,    //if activate dialog
-      confirmDShow: false,
-      bargainingShow: false,
-      actionName: Boolean,
-      amount: null,
-      tabName: "",
-      userInfo: {
+      transDShow: false,                    //if activate request making dialog
+      confirmDShow: false,                  //double check dialog for request making
+      bargainingShow: false,                //bargin dialog
+      transactionConfirmShow: false,        //double confirm dialog for request accept/reject
+      loadingShow: false,                   //loading dialog
+      transactionActionName: Boolean,       //Request making: buy true, sell false
+      requestActionName: Boolean,           //accept true, reject false      
+      userInfo: {     
         accountId: null,
         elecAmount: null,
         balance: null
       },
       queryName: Store.getItem("dis-elec-tran-name"),
       userIdentity: Store.getItem("dis-elec-tran-identity"),
-      inName: null,
       transactionInfo: {
         toAccount: null,
         fromAccount: null,
@@ -307,13 +320,13 @@ export default {
         elecPrice: 1
       },
       checkInfo: null,
+      havePending: false,
       bargainingPrice: null,
       bargainingId: null,
       userList: [],
       historyList: [],
       bargainingUser: null,
       transactionRequestList: [],
-      pendingTransactionRequestList: [],
       amountError: {
         valid: null,
         message: null
@@ -327,15 +340,12 @@ export default {
         check: null,
         valid: true
       },
-      loadingShow: false,
-      transactionRejectShow: false,
-      transactionItem: null,
-      transactionConfirmShow: false,
+      transactionItem: null
     }
   },
   created () {
     // check if the user has login and not logged out
-    if(! Store.getItem("dis-elec-tran-name")){
+    if(Store.getItem("dis-elec-tran-name") == null){
         this.$router.push("/")
     } else {
       this.getUserInfo();
@@ -346,10 +356,17 @@ export default {
   filters: {
     nullValue (str) {
       return str || "Null";
+    },
+    timeFormat(value){
+      var date = new Date(parseInt(value * 1000));
+      var tt = [date.getFullYear(), (Array(2).join("0") + (date.getMonth() + 1)).slice(-2), (Array(2).join("0") + date.getDate()).slice(-2)].join('-')  
+      + " " 
+      + [(Array(2).join("0") + date.getHours()).slice(-2), (Array(2).join("0") + date.getMinutes()).slice(-2), (Array(2).join("0") + date.getSeconds()).slice(-2)].join(':');
+      return tt;
     }
   },
   methods: {
-    numFilter(value){
+    numFilter(value){       //Display two decimal places
       value = parseFloat(value).toFixed(2)
       return value
     },
@@ -361,144 +378,120 @@ export default {
       this.$router.push("/")
     },
     async getUserInfo () {
-    await this.$axios({
-      method: "get",
-      url: `/userInfo/${this.queryName}`
-    }).then((resp) => {
-      console.log(resp)
-      if(resp.data.code == 200 && resp.data.result != null)
-        this.userInfo = resp.data.result;
-      else 
-        alert("Error. Not able to get user infomation.")
-    }).catch((error) => {
-      console.log(error);
-      alert("Please check your network connection and try again.");
-    });
-  },
-  Transaction () {
-    this.$axios({
-      method: "post",
-      url: `/transaction/transfer`,
-      params: {
-        fromAccount: this.transactionInfo.fromAccount,
-        toAccount: this.transactionInfo.toAccount,
-        elecAmount: this.transactionInfo.elecAmount,
-        elecPrice: this.transactionInfo.elecPrice
-      }
-    }).then((resp) => {
-      console.log(resp)
-      this.loadingShow = false;
-      
-      if(resp.data.code == 200) {
-        this.clearAllInfo()
-        this.getUserInfo()
-        this.getAllUser()
-        this.getTransactionRequest();
-        this.confirmDShow = false;
-        alert("Sucess!")
-      } else {
-        alert("Some error occurs. Pleas try again.")
-      }
-    }).catch((error) => {
-      console.log(error);
-      this.loadingShow = false;
-      alert("Please check your network connection and try again.");
-    });
-  },
-  // create new transaction request
-  TransactionRequest () {
-    this.$axios({
-      method: "post",
-      url: `/add`,
-      params: {
-        from: this.transactionInfo.fromAccount,
-        to: this.transactionInfo.toAccount,
-        amount: this.transactionInfo.elecAmount,
-        price: this.transactionInfo.elecPrice,
-        createTime: (new Date().getTime() / 1000) | 0,
-        updateTime: (new Date().getTime() / 1000) | 0,
-        // change bargaining user to peer user
-        bargainingUser: this.userInfo.accountId == this.transactionInfo.fromAccount ? this.transactionInfo.toAccount : this.transactionInfo.fromAccount,
-        status: 0,
-      }
-    }).then((resp) => {
-      console.log(resp)
-      this.loadingShow = false;
-      if(resp.data.code == 200) {
-        this.clearAllInfo()
-        this.getUserInfo()
-        this.getAllUser()
-        this.getTransactionRequest();
-        this.confirmDShow = false;
-        alert("Success")
-      } else {
-        alert("Some error occurs. Pleas try again.")
-      }
-    }).catch((error) => {
-      console.log(error);
-      this.loadingShow = false;
-      alert("Please check your network connection and try again.");
-    });
-  },
-  giveNewPrice () {
-    this.$axios({
-      method: "post",
-      url: `/update`,
-      params: {
-        id: this.bargainingId,
-        price: this.bargainingPrice,
-        bargainingUser: this.bargainingUser,
-        status: 0,
-      }
-    }).then((resp) => {
-      console.log(resp)
-      this.loadingShow = false;
-      if(resp.data.code == 200) {
-        this.clearAllInfo()
-        this.getUserInfo()
-        this.getAllUser()
-        this.getTransactionRequest();
-        this.bargainingShow = false;
-        alert("Success")
-      } else {
-        alert("Some error occurs. Pleas try again.")
-      }
-    }).catch((error) => {
-      console.log(error);
-      this.loadingShow = false;
-      alert("Please check your network connection and try again.");
-    });
-  },
-  // reject transaction, set status to 2
-  rejectTransaction (transaction) {
-    this.$axios({
-      method: "post",
-      url: `/update`,
-      params: {
-        id: transaction.id,
-        price: transaction.price,
-        bargainingUser: '',
-        status: 2,
-      }
-    }).then((resp) => {
-      console.log(resp)
-      this.loadingShow = false;
+      await this.$axios({
+        method: "get",
+        url: `/userInfo/${this.queryName}`
+      }).then((resp) => {
+        console.log(resp)
+        if(resp.data.code == 200 && resp.data.result != null) {
+          this.userInfo = resp.data.result;
+        }
+        else {
+          this.$router.push("/")
+          alert("Error. Not able to get user infomation.")
+        }
+      }).catch((error) => {
+        console.log(error);
+        alert("Please check your network connection and try again.");
+      });
+    },
+    // create new transaction request
+    TransactionRequest () {
+      this.$axios({
+        method: "post",
+        url: `/add`,
+        params: {
+          from: this.transactionInfo.fromAccount,
+          to: this.transactionInfo.toAccount,
+          amount: this.transactionInfo.elecAmount,
+          price: this.transactionInfo.elecPrice,
+          createTime: (new Date().getTime() / 1000) | 0,
+          updateTime: (new Date().getTime() / 1000) | 0,
+          // change bargaining user to peer user
+          bargainingUser: this.userInfo.accountId == this.transactionInfo.fromAccount ? this.transactionInfo.toAccount : this.transactionInfo.fromAccount,
+          status: 0,
+        }
+      }).then((resp) => {
+        console.log(resp)
+        this.loadingShow = false;
+        if(resp.data.code == 200) {
+          this.clearAllInfo()
+          this.getUserInfo()
+          this.getAllUser()
+          this.getTransactionRequest();
+          this.confirmDShow = false;
+          alert("Success")
+        } else {
+          alert("Some error occurs. Pleas try again.")
+        }
+      }).catch((error) => {
+        console.log(error);
+        this.loadingShow = false;
+        alert("Please check your network connection and try again.");
+      });
+    },
+    //Bargin infomation update
+    giveNewPrice () {
+      this.$axios({
+        method: "post",
+        url: `/update`,
+        params: {
+          id: this.bargainingId,
+          price: this.bargainingPrice,
+          bargainingUser: this.bargainingUser,
+          status: 0,
+          updateTime: (new Date().getTime() / 1000) | 0
+        }
+      }).then((resp) => {
+        console.log(resp)
+        this.loadingShow = false;
+        if(resp.data.code == 200) {
+          this.clearAllInfo()
+          this.getUserInfo()
+          this.getAllUser()
+          this.getTransactionRequest();
+          this.bargainingShow = false;
+          alert("Success")
+        } else {
+          alert("Some error occurs. Pleas try again.")
+        }
+      }).catch((error) => {
+        console.log(error);
+        this.loadingShow = false;
+        alert("Please check your network connection and try again.");
+      });
+    },
+    // reject transaction, set status to 2
+    rejectTransaction (transaction) {
+      this.$axios({
+        method: "post",
+        url: `/update`,
+        params: {
+          id: transaction.id,
+          price: transaction.price,
+          bargainingUser: '',
+          status: 2,
+          updateTime: (new Date().getTime() / 1000) | 0
+        }
+      }).then((resp) => {
+        console.log(resp)
+        this.loadingShow = false;
 
-      if(resp.data.code == 200) {
-        this.clearAllInfo()
-        this.getUserInfo()
-        this.getAllUser()
-        this.getTransactionRequest();
-        alert("Success")
-      } else {
-        alert("Some error occurs. Pleas try again.")
-      }
-    }).catch((error) => {
-      console.log(error);
-      this.loadingShow = false;
-      alert("Please check your network connection and try again.");
-    });
-  },
+        if(resp.data.code == 200) {
+          this.clearAllInfo()
+          this.getUserInfo()
+          this.getAllUser()
+          this.getTransactionRequest();
+          alert("Success")
+        } else {
+          alert("Some error occurs. Pleas try again.")
+        }
+      }).catch((error) => {
+        console.log(error);
+        this.loadingShow = false;
+        alert("Please check your network connection and try again.");
+      });
+    },
     // confirm transaction
     confirmTransaction (transaction) {
       this.$axios({
@@ -532,6 +525,7 @@ export default {
               price: transaction.price,
               bargainingUser: '',
               status: 1,
+              updateTime: (new Date().getTime() / 1000) | 0
             }
           }).then((resp) => {
             console.log(resp)
@@ -557,6 +551,7 @@ export default {
         alert("Please check your network connection and try again.\n If you have tried several times and you are sure your network is ok, please reject the transaction.");
       });
     },
+    //get all available users that are able to do transaction
     async getAllUser () {
       await this.$axios({
         method: "get",
@@ -603,9 +598,9 @@ export default {
         if(resp.data.code == 200) {
           this.transactionRequestList = resp.data.result
           // get pending transaction request which status is 0
-          this.pendingTransactionRequestList = this.transactionRequestList.filter((item) => {
+          this.havePending = (this.transactionRequestList.filter((item) => {
             return item.status == 0
-          })
+          }).length > 0)
         } else {
           alert("Some error occurs. Pleas try again.");
         }
@@ -614,6 +609,7 @@ export default {
         alert("Please check your network connection and try again.");
       });
     },
+    //switch tabs
     getTabIndex (res) {
       switch (res) {
         case 0:
@@ -644,7 +640,7 @@ export default {
     },
     transDialog (transUser) {
       this.transDShow = true;
-      if (this.actionName) {
+      if (this.transactionActionName) {
         //Buy
         this.transactionInfo.fromAccount = transUser;
         this.transactionInfo.toAccount = this.queryName;
@@ -693,6 +689,7 @@ export default {
         alert("Please check your network connection and try again.");
       });
     },
+    //first password monitor
     newPwdFirstMonitor(res){
       if(this.newPwd.first != null && this.newPwd.check != null && this.newPwd.check != res) {
         this.$set(this.newPwd, "valid", false);
@@ -702,6 +699,7 @@ export default {
         this.$set(this.newPwd, "valid", true);
       }
     },
+    //second password for double checking
     newPwdCheckMonitor(res){
       if(this.newPwd.first != null && this.newPwd.check != null && this.newPwd.first != res) {
         this.$set(this.newPwd, "valid", false);
@@ -715,45 +713,35 @@ export default {
       if(res == null || res == ""){                 //empty input
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError, "message", "Input can not be empty.");
-        console.log("null")
       } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError, "message", "Please enter a positive integer.");
-        console.log("invalid")
-      } else if (this.actionName && res > this.checkInfo) {           //out of stock
+      } else if (this.transactionActionName && res > this.checkInfo) {           //out of stock
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError,"message", "Not enough amount, max: " + this.checkInfo);
-        console.log("invalid")
-      } else if (!this.actionName && res > this.userInfo.elecAmount) {
+      } else if (!this.transactionActionName && res > this.userInfo.elecAmount) {
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError,"message", "Not enough amount, max: " + this.userInfo.elecAmount);
-      } else if (this.actionName && res * this.transactionInfo.elecPrice > this.userInfo.balance) {
+      } else if (this.transactionActionName && res * this.transactionInfo.elecPrice > this.userInfo.balance) {
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError,"message", "Not enough money, please note your balance.");
       } else {
         this.$set(this.amountError, "valid", true);
-        console.log("valid")
       }
-      console.log(res)
     },
     priceMonitor(res){
       if(res == null || res == ""){                 //empty input
         this.$set(this.priceError, "valid", false);
         this.$set(this.priceError, "message", "Input can not be empty.");
-        console.log("null")
       } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
         this.$set(this.priceError, "valid", false);
         this.$set(this.priceError, "message", "Please enter a positive integer.");
-        console.log("invalid")
-      } else if (this.actionName && res * this.transactionInfo.elecPrice > this.userInfo.balance) {           //out of stock
+      } else if (this.transactionActionName && res * this.transactionInfo.elecPrice > this.userInfo.balance) {           //out of stock
         this.$set(this.priceError, "valid", false);
         this.$set(this.priceError,"message", "Not enough money, please note your balance. ");
-        console.log("invalid")
       }  else {
         this.$set(this.priceError, "valid", true);
-        console.log("valid")
       }
-      console.log(res)
     }
   },
   computed: {
@@ -819,5 +807,10 @@ export default {
   width: 70%;
   float: right;
   justify-content: end;
+}
+
+.highlight {
+  background-color: #FFCC99;
+  font-weight: bolder;
 }
 </style>

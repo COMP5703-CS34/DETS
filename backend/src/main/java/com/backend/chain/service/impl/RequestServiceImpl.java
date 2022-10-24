@@ -24,8 +24,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public int updateRequest(int id, double price, String bargainingUser, int status) {
-        return requestDao.updateRequest(id, price, bargainingUser, status);
+    public int updateRequest(int id, double price, String bargainingUser, int status, int updateTime) {
+        return requestDao.updateRequest(id, price, bargainingUser, status, updateTime);
     }
 
     @Override

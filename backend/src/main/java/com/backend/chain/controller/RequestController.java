@@ -31,12 +31,12 @@ public class RequestController {
 
     @PostMapping("api/update")
     public Response updateRequest(Request req) {
-        requestService.updateRequest(req.getId(), req.getPrice(),req.getBargainingUser(), req.getStatus());
+        requestService.updateRequest(req.getId(), req.getPrice(),req.getBargainingUser(), req.getStatus(), req.getUpdateTime());
         return ResponseFactory.buildSuccessResult("Request Updated!");
     }
 
     @GetMapping("api/query/{userid}")
-    public Response addRequest(@PathVariable String userid) {
+    public Response queryequest(@PathVariable String userid) {
         List<Request> list = requestService.getAllByUser(userid);
         return ResponseFactory.buildSuccessResult(list);
     }

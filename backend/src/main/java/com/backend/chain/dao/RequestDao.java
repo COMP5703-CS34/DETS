@@ -21,7 +21,7 @@ public interface RequestDao {
      * @param user
      * @return
      */
-    @Select("select id,`from`,`to`,type,amount,price,status,createTime,updateTime,bargainingUser from request where `from`=#{user} or `to` = #{user}")
+    @Select("select id,`from`,`to`,type,amount,price,status,createTime,updateTime,bargainingUser from request where `from`=#{user} or `to` = #{user} order by updateTime DESC")
     List<Request> getAllByUser(String user);
 
     /**
@@ -32,8 +32,8 @@ public interface RequestDao {
      * @param status
      * @return
      */
-    @Update("update request set status = #{status} , price = #{price} , bargainingUser = #{bargainingUser} where id = #{id}")
-    int updateRequest(int id, double price,String bargainingUser, int status);
+    @Update("update request set status = #{status} , price = #{price} , bargainingUser = #{bargainingUser} , updateTime = #{updateTime} where id = #{id}")
+    int updateRequest(int id, double price,String bargainingUser, int status, int updateTime);
 
     /**
      * delete request by id

@@ -9,7 +9,7 @@ public interface RequestService {
 
     List<Request> getAllByUser(String userId);
 
-    int updateRequest(int id, double price, String bargainingUser, int status);
+    int updateRequest(int id, double price, String bargainingUser, int status, int updateTime);
 
     int deleteRequest(int id);
 }
