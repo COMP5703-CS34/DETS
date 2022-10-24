@@ -416,7 +416,6 @@ export default {
         this.loadingShow = false;
         if(resp.data.code == 200) {
           this.clearAllInfo()
-          this.getUserInfo()
           this.getAllUser()
           this.getTransactionRequest();
           this.confirmDShow = false;
@@ -447,8 +446,6 @@ export default {
         this.loadingShow = false;
         if(resp.data.code == 200) {
           this.clearAllInfo()
-          this.getUserInfo()
-          this.getAllUser()
           this.getTransactionRequest();
           this.bargainingShow = false;
           alert("Success")
@@ -479,8 +476,6 @@ export default {
 
         if(resp.data.code == 200) {
           this.clearAllInfo()
-          this.getUserInfo()
-          this.getAllUser()
           this.getTransactionRequest();
           alert("Success")
         } else {
@@ -513,8 +508,6 @@ export default {
         }
         this.clearAllInfo()
         this.getUserInfo()
-        this.getAllUser()
-        this.getTransactionRequest();
         if (resp.data.code == 200) {
           // transaction success
           this.$axios({
@@ -532,8 +525,6 @@ export default {
             this.loadingShow = false;
             if(resp.data.code == 200) {
               this.clearAllInfo()
-              this.getUserInfo()
-              this.getAllUser()
               this.getTransactionRequest();
               alert("Success")
             } else {
