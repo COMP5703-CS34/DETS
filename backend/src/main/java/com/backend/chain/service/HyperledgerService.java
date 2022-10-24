@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class HyperledgerService {
     private static final Contract contract = HyperledgerConnection.getInstance();
-    private static final String NO_OBJECT_WARNING = "No Such object!";
+    private static final String NO_OBJECT_WARNING = "No Such Object!";
 
     public byte[] getUserInfo(String name) {
         byte[] bytes = NO_OBJECT_WARNING.getBytes();
@@ -32,7 +32,7 @@ public class HyperledgerService {
     }
 
     public byte[] getAllUser() {
-        byte[] bytes = null;
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
         try {
             bytes = contract.evaluateTransaction("queryAllAccount");
             // System.out.print(new String(bytes));
@@ -43,7 +43,7 @@ public class HyperledgerService {
     }
 
     public byte[] makeTransfer(String fromAccount, String toAccount, String elecAmount, String elecPrice) {
-        byte[] bytes = null;
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
 
         try {
             bytes = contract.submitTransaction("transfer", toAccount, fromAccount, elecAmount, elecPrice);
@@ -69,7 +69,7 @@ public class HyperledgerService {
 
     public byte[] addUser(String name, String elecAmount, String balance, String password, String identity,
                           String adminID) {
-        byte[] bytes = null;
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
 
         try {
             bytes = contract.submitTransaction("add", name, elecAmount, balance, password, identity, adminID);
@@ -117,7 +117,7 @@ public class HyperledgerService {
     }
 
     public byte[] getHistory(String name) {
-        byte[] bytes = null;
+        byte[] bytes = NO_OBJECT_WARNING.getBytes();
 
         try {
             bytes = contract.evaluateTransaction("queryHistory", name);

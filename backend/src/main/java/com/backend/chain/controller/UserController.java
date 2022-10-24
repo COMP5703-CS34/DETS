@@ -30,7 +30,8 @@ public class UserController {
                         @RequestParam("adminID") String adminID) {
 
         byte[] bytes = hyperledgerService.addUser(accountID, elecAmount, balance, password, identity, adminID);
-        if (bytes.toString().isEmpty()) {
+        String res = new String(bytes);
+        if (!res.equals("Success")) {
             return ResponseFactory.buildFailResult("Cannot add!");
         }
         return ResponseFactory.buildSuccessResult(new String(bytes));
@@ -42,9 +43,6 @@ public class UserController {
                            @RequestParam("balance") String balance,
                            @RequestParam("identity") String identity) {
         byte[] bytes = hyperledgerService.updateUser(accountID, elecAmount, balance, identity);
-        if (bytes.toString().equals(accountID)) {
-            return ResponseFactory.buildFailResult(String.format("Update %s failed!", accountID));
-        }
 
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
@@ -53,9 +51,6 @@ public class UserController {
     public Response setPassword(@RequestParam("name") String accountID,
                            @RequestParam("password") String password) {
         byte[] bytes = hyperledgerService.setPassword(accountID,password);
-        if (bytes.toString().equals(accountID)) {
-            return ResponseFactory.buildFailResult(String.format("Set Password for %s failed!", accountID));
-        }
 
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
@@ -63,9 +58,6 @@ public class UserController {
     @PostMapping("/api/userControl/delete")
     public Response Delete(@RequestParam("name") String name) {
         byte[] bytes = hyperledgerService.deleteUser(name);
-        if (bytes.toString().equals(name)) {
-            return ResponseFactory.buildFailResult(String.format("Set Password for %s failed!", name));
-        }
 
         return ResponseFactory.buildSuccessResult(new String(bytes));
     }
