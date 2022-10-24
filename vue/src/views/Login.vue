@@ -98,7 +98,6 @@ export default {
             if(res == null || res == ""){                 //empty input
                 this.$set(this.nameValid, "value", false);
                 this.$set(this.error, "message", "Input can not be empty.");
-                console.log("null")
             } else {
                 var c = res.charAt(0).charCodeAt()
                 if(c < 65 || c > 90){

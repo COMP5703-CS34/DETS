@@ -342,7 +342,10 @@
             }
             alert("Success");
           }else {
-            alert("Some error occurs. Pleas try again.")
+            if(this.actionName)
+              alert("Some error occurs.\nMay because of the username already exits.\nPlease try again.")
+            else
+              alert("Some error occurs. Pleas try again.")
           }
           return;
         }).catch((error) => {
@@ -386,31 +389,23 @@
         if(res == null || res == ""){                 //empty input
           this.$set(this.amountError, "valid", false);
           this.$set(this.amountError, "message", "Please enter a positive number.");
-          console.log("null")
         } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
           this.$set(this.amountError, "valid", false);
           this.$set(this.amountError, "message", "Please enter a positive number.");
-          console.log("invalid")
         } else {
           this.$set(this.amountError, "valid", true);
-          console.log("valid")
         }
-        console.log(res)
       },
       priceMonitor(res){
         if(res == null || res == ""){                 //empty input
           this.$set(this.priceError, "valid", false);
           this.$set(this.priceError, "message", "Please enter a positive number.");
-          console.log("null")
         } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
           this.$set(this.priceError, "valid", false);
           this.$set(this.priceError, "message", "Please enter a positive number.");
-          console.log("invalid")
         } else {
           this.$set(this.priceError, "valid", true);
-          console.log("valid")
         }
-        console.log(res)
       }
     },
     computed: {

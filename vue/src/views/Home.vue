@@ -299,6 +299,7 @@ export default {
   },
   data () {
     return {
+      searchHeight: `637.5px`,                    //default window height
       transDShow: false,                    //if activate request making dialog
       confirmDShow: false,                  //double check dialog for request making
       bargainingShow: false,                //bargin dialog
@@ -369,6 +370,11 @@ export default {
     numFilter(value){       //Display two decimal places
       value = parseFloat(value).toFixed(2)
       return value
+    },
+    //dynamically judge window size and set the width of review section
+    searchFormHeight() {
+      let h = window.innerHeight;
+      this.searchHeight=`${h * 0.75}px`;
     },
     logOut(){
       if(Store.getItem("dis-elec-tran-name") != null){
@@ -525,6 +531,7 @@ export default {
             this.loadingShow = false;
             if(resp.data.code == 200) {
               this.clearAllInfo()
+              this.getUserInfo()
               this.getTransactionRequest();
               alert("Success")
             } else {
@@ -745,7 +752,25 @@ export default {
     priceValid:function(){
       return this.priceError.valid
     }
-  }
+  },
+  mounted(){
+    // dynamic resize the review section
+    this.searchFormHeight(); 
+    window.onresize = () => {
+      if(!this.timer){ // use timer to limit resize frequency
+        this.timer = true;
+        let that = this; 
+        setTimeout(function(){
+          that.searchFormHeight();
+          that.timer = false;
+        },400)
+      }
+    }
+  },
+  destroyed() {
+		// unbind event when destory window
+		window.onresize = null;
+	}
 };
 </script>
 
@@ -753,7 +778,7 @@ export default {
 #head {
   display: flex;
   justify-content: space-between;
-  height: fit-content;
+  height: 20%;
 }
 
 #leftTitle {
@@ -807,7 +832,7 @@ export default {
 }
 
 .scrollbox {
-  height: 100%;
+  height: 637.5px;
   overflow-y: scroll;
 }
 </style>
