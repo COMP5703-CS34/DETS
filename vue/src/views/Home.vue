@@ -19,7 +19,7 @@
       <tabs fill class="container d-flex" @tabSwitch="getTabIndex($event)">
         <card shadow>
           <!--Transaction: Show users that is able to transact with. And make buy/sell request.-->
-          <tab-pane title="Transaction" name="Transaction">
+          <tab-pane class="scrollbox" title="Transaction" name="Transaction">
             <div>
               <!--If there are available users-->
               <div v-if="userList.length > 0">
@@ -111,7 +111,7 @@
           </tab-pane>
 
           <!--History on blockchain.-->
-          <tab-pane title="History">
+          <tab-pane class="scrollbox" title="History">
             <div>
               <div v-if="historyList.length > 0">
                 <table class="table">
@@ -140,7 +140,7 @@
           </tab-pane>
 
           <!-- Pending Transaction tab -->
-          <tab-pane title="Pending">
+          <tab-pane class="scrollbox" title="Pending">
               <div>
               <!-- bargaining dialog -->
               <modal :show.sync="bargainingShow" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm">
@@ -767,16 +767,17 @@ export default {
 
 #leftTitle {
   width: 70%;
+  margin-top: 2%;
   display: flex;
-  justify-content: center;
+  padding-right: -3%;
+  justify-content: flex-start;
 }
 
 #rightInfo {
   margin-top: 2%;
-  margin-right: 70px;
+  padding-right: 5%;
   width: 30%;
   float: right;
-  padding-left: 3%;
   text-align: right;
   vertical-align: auto;
 }
@@ -794,7 +795,7 @@ export default {
 }
 
 .container {
-  min-width: 85%;
+  min-width: 90%;
 }
 
 .inputDiv {
@@ -812,5 +813,10 @@ export default {
 .highlight {
   background-color: #FFCC99;
   font-weight: bolder;
+}
+
+.scrollbox {
+  height: 100%;
+  overflow-y: scroll;
 }
 </style>

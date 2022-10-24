@@ -430,17 +430,18 @@
     justify-content: space-between;
     height: fit-content;
   }
-  #leftTitle{
+  #leftTitle {
     width: 70%;
-    display: flex;
-    justify-content: center;
-  }
-  #rightInfo{
     margin-top: 2%;
-    margin-right: 70px;
+    display: flex;
+    padding-right: -3%;
+    justify-content: flex-start;
+  }
+  #rightInfo {
+    margin-top: 2%;
+    padding-right: 5%;
     width: 30%;
     float: right;
-    padding-left: 8%;
     text-align: right;
     vertical-align: auto;
   }
