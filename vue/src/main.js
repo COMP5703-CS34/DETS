@@ -19,7 +19,6 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import Argon from "./plugins/argon-kit";
-import './registerServiceWorker'
 import md5 from 'js-md5'
 
 var axios = require('axios')
