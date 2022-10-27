@@ -16,8 +16,8 @@
     <!--Body Section-->
     <div>
       <!--Tabs on the left side of the page.-->
-      <tabs fill class="container d-flex" @tabSwitch="getTabIndex($event)">
-        <card shadow>
+      <tabs fill class="container d-flex" @tabSwitch="getTabIndex($event)" >
+        <card shadow style="width: 107%">
           <!--Transaction: Show users that is able to transact with. And make buy/sell request.-->
           <tab-pane class="scrollbox" title="Transaction" name="Transaction">
             <div>
@@ -299,7 +299,6 @@ export default {
   },
   data () {
     return {
-      searchHeight: `637.5px`,                    //default window height
       transDShow: false,                    //if activate request making dialog
       confirmDShow: false,                  //double check dialog for request making
       bargainingShow: false,                //bargin dialog
@@ -374,7 +373,10 @@ export default {
     //dynamically judge window size and set the width of review section
     searchFormHeight() {
       let h = window.innerHeight;
-      this.searchHeight=`${h * 0.75}px`;
+      var scrollList = document.getElementsByClassName("scrollbox");
+      for(var i = 0; i < scrollList.length; i++){
+        scrollList[i].setAttribute("style", `height: ${h*0.65}px`);
+      }
     },
     logOut(){
       if(Store.getItem("dis-elec-tran-name") != null){
@@ -668,7 +670,7 @@ export default {
         url: `/userControl/setPasswd`,
         params:{
           name: this.queryName,
-          password: this.newPwd.first
+          password: this.$md5(this.newPwd.first)
         }
       }).then((resp) => {
         console.log(resp)
@@ -810,10 +812,6 @@ export default {
   margin-bottom: 10px;
 }
 
-.container {
-  min-width: 90%;
-}
-
 .inputDiv {
   display: flex;
   justify-content: space-between;
@@ -833,6 +831,6 @@ export default {
 
 .scrollbox {
   height: 637.5px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>

@@ -64,7 +64,7 @@ export default {
                 url: `/login`,
                 params: {
                     name: this.userInfo.name,
-                    InputPwd: this.userInfo.InputPwd
+                    InputPwd: (this.userInfo.name === 'Admin') ? this.userInfo.InputPwd : this.$md5(this.userInfo.InputPwd)
                 }
             }).then((resp) => {
                 console.log(resp)
