@@ -113,6 +113,7 @@
           <!--History on blockchain.-->
           <tab-pane class="scrollbox" title="History">
             <div>
+              <p>Please note: The history includes all changes on your account including account adding & updating as well as completed transactions.</p>
               <div v-if="historyList.length > 0">
                 <table class="table">
                   <thead>
