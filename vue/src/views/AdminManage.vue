@@ -322,7 +322,7 @@
             name: this.accountInfo.name,
             elecAmount: this.accountInfo.elecAmount,
             balance: this.accountInfo.balance,
-            password: this.$md5(this.accountInfo.password),
+            password: this.actionName ? this.$md5(this.accountInfo.password) : null,
             identity: this.accountInfo.identity,
             adminID: this.accountInfo.adminID
           }

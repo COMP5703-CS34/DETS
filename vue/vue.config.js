@@ -21,11 +21,11 @@ module.exports = {
     sourceMap: process.env.NODE_ENV !== 'production'
   },
   devServer: {
-    host: "localhost",
+    host: "0.0.0.0",
     port: 8081,
     proxy: {
       "/api": {
-        target: "http://localhost:3000",
+        target: "http://0.0.0.0:3000",
         secure: false,
         changeOrigin: true
       }

@@ -23,7 +23,7 @@ import md5 from 'js-md5'
 
 var axios = require('axios')
 var default_port = 3000
-axios.defaults.baseURL = `http://localhost:${default_port}/api`
+axios.defaults.baseURL = `http://0.0.0.0:${default_port}/api`
 var myVar=setInterval(function(){urlState()},700);
 
 // Global registration
@@ -41,7 +41,7 @@ function urlState(){
   if(default_port <= 3010) {
       axios({
       method: "get",
-      url: `http://localhost:${default_port}/api/test`
+      url: `http://0.0.0.0:${default_port}/api/test`
     }).then((resp) => {
       console.log(resp)
       if(resp.status == 200) {
