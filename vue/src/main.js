@@ -23,8 +23,6 @@ import md5 from "js-md5"
 
 var axios = require('axios')
 var default_port = 3000
-axios.defaults.baseURL = `http://0.0.0.0:${default_port}/api`
-var myVar=setInterval(function(){urlState()},700);
 
 // Global registration
 Vue.prototype.$axios = axios
@@ -41,33 +39,33 @@ var ip_address = null;
 
 try{
     var XHR = new XMLHttpRequest();
-    XHR.open("GET", '../../../IPAddress.txt', false);
+    XHR.open("GET", 'IPAddress.txt', false);
     XHR.overrideMimeType("text/html;charset=utf-8");
     XHR.send(null);
-    ip_address = XHR.responseText
-
+    ip_address = XHR.responseText;
 } finally {
+  ip_address = ip_address.replace("\n","")
+  console.log(ip_address)
   axios.defaults.baseURL = `http://${ip_address}:${default_port}/api`
   var myVar=setInterval(function(){urlState()},700);
+}
 
-  function urlState(){
-    if(default_port <= 3010) {
-        axios({
-        method: "get",
-        url: `http://${ip_address}:${default_port}/api/test`
-      }).then((resp) => {
-        console.log(resp)
-        if(resp.status == 200) {
-          axios.defaults.baseURL = resp.config.url.replace("/test", "")
-          clearInterval(myVar);
-          return;
-        }
-      })
-      default_port ++;
-    } else {
-      clearInterval(myVar);
-      alert("Some error occur in server connection. \nPlease contact technists.")
-    }
+function urlState(){
+  if(default_port <= 3010) {
+      axios({
+      method: "get",
+      url: `http://${ip_address}:${default_port}/api/test`
+    }).then((resp) => {
+      console.log(resp)
+      if(resp.status == 200) {
+        axios.defaults.baseURL = resp.config.url.replace("/test", "")
+        clearInterval(myVar);
+        return;
+      }
+    })
+    default_port ++;
+  } else {
+    clearInterval(myVar);
+    alert("Some error occur in server connection. \nPlease contact technists.")
   }
-  
 }
