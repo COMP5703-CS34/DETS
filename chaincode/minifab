@@ -3,9 +3,13 @@
 [ ! -d "$(pwd)/vars" ] && mkdir vars
 if type ip > /dev/null 2>&1; then
   ADDRS=$(ip addr|grep 'inet '|grep -v '\.1/'|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
+  echo $ADDRS > ../IPAddress.txt
 else 
   ADDRS=$(ifconfig|grep 'inet '|grep -v '\.1 '|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
+  echo $ADDRS > ../IPAddress.txt
 fi
+cp ../IPAddress.txt ../backend/src/main/resources/IPAddress.txt
+
 if [ -f "$(pwd)/spec.yaml" ]; then
   echo "Using spec file: $(pwd)/spec.yaml"
   minifab_opt="${minifab_opt} -v $(pwd)/spec.yaml:/home/spec.yaml"

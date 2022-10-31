@@ -37,23 +37,37 @@ new Vue({
   render: h => h(App)
 }).$mount("#app");
 
-function urlState(){
-  if(default_port <= 3010) {
-      axios({
-      method: "get",
-      url: `http://0.0.0.0:${default_port}/api/test`
-    }).then((resp) => {
-      console.log(resp)
-      if(resp.status == 200) {
-        axios.defaults.baseURL = resp.config.url.replace("/test", "")
-        clearInterval(myVar);
-        return;
-      }
-    })
-    default_port ++;
-  } else {
-    clearInterval(myVar);
-    alert("Some error occur in server connection. \nPlease contact technists.")
+var ip_address = null;
+
+try{
+    var XHR = new XMLHttpRequest();
+    XHR.open("GET", '../../../IPAddress.txt', false);
+    XHR.overrideMimeType("text/html;charset=utf-8");
+    XHR.send(null);
+    ip_address = XHR.responseText
+
+} finally {
+  axios.defaults.baseURL = `http://${ip_address}:${default_port}/api`
+  var myVar=setInterval(function(){urlState()},700);
+
+  function urlState(){
+    if(default_port <= 3010) {
+        axios({
+        method: "get",
+        url: `http://${ip_address}:${default_port}/api/test`
+      }).then((resp) => {
+        console.log(resp)
+        if(resp.status == 200) {
+          axios.defaults.baseURL = resp.config.url.replace("/test", "")
+          clearInterval(myVar);
+          return;
+        }
+      })
+      default_port ++;
+    } else {
+      clearInterval(myVar);
+      alert("Some error occur in server connection. \nPlease contact technists.")
+    }
   }
   
 }
