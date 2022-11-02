@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd vue; 
+cd ../vue; 
 if [ ! -d "node_modules" ]; then
     npm install
 fi
