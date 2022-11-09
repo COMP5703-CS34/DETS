@@ -73,6 +73,48 @@ This is an example of how you may give instructions on setting up your project l
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
+#### Backend
+This is an example of how to list things you need to use the software and how to install them.
+docker
+```
+sudo apt-get install docker
+sudo apt-get install docker-ce
+```
+Ssh (It is required if the virtual machine needs connection with outside environment)
+MySQL (The codes beginning from line 7 should be copied exactly.)
+```
+sudo mysql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'newpwd'; #newpwd is the new password you set for root
+FLUSH PRIVILEGES;
+quit;
+sudo service mysql restart
+
+mysql -uroot -p #And enter the password you’ve just set
+CREATE USER 'detscs341'@'localhost' IDENTIFIED WITH mysql_native_password BY 'detscs341';
+GRANT ALL PRIVILEGES ON *.* TO 'detscs341'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+quit;
+sudo service mysql restart
+```
+
+#### Frontend  
+Java 11  
+maven  
+```
+sudo apt-get install Maven
+```
+node.js v15.14.0  
+npm 7.7.6
+```
+curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt-get install vue-cli
+node -v && npm -v
+```
+Vue-cli
+```
+sudo npm install -g @vue/cli
+```
 
 
 ### Installing
