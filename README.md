@@ -60,6 +60,7 @@ The purpose of this project is to build and develop a web application hosted on 
 
 * [Hyperledger](https://github.com/hyperledger)
 * Vue + SpringBoot (Java)
+* Ubuntu 20.04
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -73,139 +74,44 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-#### Backend
 
-This is an example of how to list things you need to use the software and how to install them.
+### Installing
+Clone the project into local directory:
+```
+git clone https://github.com/COMP5703-CS34/DETS.git
+```
+Go to script dir,
+```
+cd script
+```
+Run the script file **step1.sh**
+```
+sudo sh step1.sh
+```
+**step1.sh** is to build the database and start the chaincode network. It may take about 10-15 minutes to start up. The successful page should be like:
 
-- docker
-- maven
-- ssh
 
-#### Frontend
+When the script file **step1.sh** runs successfully, run step2.sh (you can only run **step2.sh** if **step1.sh** runs successfully, otherwise an error will occur). If you get a red prompt or a non-successful screen when running the above command, you need to run the above command again.
+```
+sudo sh step2.sh
+```
+**step2.sh** is to start the front and back-end services. A successful run will result in as followed:
 
-- Java 11
 
-- node.js v15.14.0
 
-- npm 7.7.6
+Then you can open an explorer and access to the URL shown in the terminal Frontend: Vue. You will see the home page.
 
-  ```
-  curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash –
-  sudo apt-get install -y nodejs
-  node -v && npm -v
-  ```
-
-- Vue-cli
-
-  ```
-  npm install -g @vue/cli
-  ```
-
-- Maven
-
-  ```
-  sudo apt-get install Maven
-  ```
-
-### Installation
-
-#### First of all
-
-1. Clone the project into local directory:
-
-   ```
-   git clone https://github.com/COMP5703-CS34/minifab-elec.git
-   ```
-
-#### Chaincode
-
-1. Go to [minifab-elec](https://github.com/COMP5703-CS34/minifab-elec), pull the chaincode of this project into local directory
-
-2. Move minifab-elec into DETS, and rename it as **chaincode**:
-
-   ```
-   rm -rf DETS/chaincode
-   cp -r minifab-elec DETS/chaincode
-   ```
-
-3. Go to chaincode dir, initialize the chain:
-
-   ```
-   sudo ./minifab up -o stateA.elec.com -i 2.1 -n elec-chaincode -l java -v 1.0 -d true -e true -p '"init"'
-   ```
-
-#### Backend
-
-1. Check resources directory
-
-2. Go to backend dir:
-
-   ```
-   cd backend
-   ./mvnw spring-boot:run
-   ```
-
-3. If successful you will see:
-
-   ```
-     .   ____          _            __ _ _
-    /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-   ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
-    \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-     '  |____| .__|_| |_|_| |_\__, | / / / /
-    =========|_|==============|___/=/_/_/_/
-    :: Spring Boot ::                (v2.7.3)
-   ```
-
-4. And in the few lines from the bottom
-
-   ```
-   INFO xxxx --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 3000 (http) with context path ''
-   ```
-
-5. Open a explore and enter:
-
-   ```
-   https://localhost:3000
-   ```
-
-#### Frontend
-
-1. Come to frontend directory:
-
-   ```
-   cd vue
-   ```
-
-2. First time install or after big change:
-
-   ```
-   npm install
-   ```
-
-3. Run frontend. 
-
-   ```
-   npm run serve
-   ```
-
-4. If successful, open random explorer and enter address shown on terminal, you will see the homepage. End frontend with `Crtl + Z`
-
-5. Before hand to github or after large change:
-
-   ```
-   rm -rf node_modules/
-   npm install
-   ```
-
-6. 
-
-7. 
-
-   
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+**Important:** Do not close these two terminals. If you accidentally close them, you can use
+```
+sudo sh backscript.sh
+# for restarting backend
+```
+or
+```
+sudo sh vuescript.sh
+# for restarting frontend
+```
+to start the back-end and front-end respectively.
 
 
 <!-- USAGE EXAMPLES -->
@@ -213,23 +119,10 @@ This is an example of how to list things you need to use the software and how to
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](/user manual.docx)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -251,38 +144,15 @@ Don't forget to give the project a star! Thanks again!
 
 
 
-<!-- LICENSE -->
-
-## License
-
-~~Distributed under the MIT License. See `LICENSE.txt` for more information.~~
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Your Name - [mzha6702@uni.sydney.edu.au](https://twitter.com/twitter_handle) 
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
+Project Link: [https://github.com/COMP5703-CS34/DETS](https://github.com/COMP5703-CS34/DETS)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
