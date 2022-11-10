@@ -716,7 +716,7 @@ export default {
         this.$set(this.amountError, "message", "Input can not be empty.");
       } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input
         this.$set(this.amountError, "valid", false);
-        this.$set(this.amountError, "message", "Please enter a positive integer.");
+        this.$set(this.amountError, "message", "Please enter a positive number.");
       } else if (this.transactionActionName && res > this.checkInfo) {           //out of stock
         this.$set(this.amountError, "valid", false);
         this.$set(this.amountError,"message", "Not enough amount, max: " + this.checkInfo);
@@ -736,7 +736,7 @@ export default {
         this.$set(this.priceError, "message", "Input can not be empty.");
       } else if(res.toString().slice(0,1) == '-' || res < 0){       //negative input or not number
         this.$set(this.priceError, "valid", false);
-        this.$set(this.priceError, "message", "Please enter a positive integer.");
+        this.$set(this.priceError, "message", "Please enter a positive number.");
       } else if (this.transactionActionName && res * this.transactionInfo.elecPrice > this.userInfo.balance) {           //out of stock
         this.$set(this.priceError, "valid", false);
         this.$set(this.priceError,"message", "Not enough money, please note your balance. ");
