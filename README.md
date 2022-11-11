@@ -6,7 +6,7 @@
   <p align="center">
     a blockchain ledger system to facilitate transactions of electricity
     <br />
-    <a href="https://github.com/COMP5703-CS34/DETS"><strong>Explore the docs »</strong></a>
+<a href="https://github.com/COMP5703-CS34/DETS/blob/master/User%20manual.pdf"><strong>Know more by user manual »</strong></a>
     <br />
     <br />
     <a href="https://github.com/COMP5703-CS34/DETS">View Demo</a>
@@ -16,7 +16,6 @@
     <a href="https://github.com/COMP5703-CS34/DETS/issues">Request Feature</a>
   </p>
 
-</div>
 
 
 
@@ -39,11 +38,8 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -117,7 +113,7 @@ sudo npm install -g @vue/cli
 ```
 
 
-### Installing
+### Installation
 Clone the project into local directory:
 ```
 git clone https://github.com/COMP5703-CS34/DETS.git
