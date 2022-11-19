@@ -9,7 +9,7 @@
 <a href="https://github.com/COMP5703-CS34/DETS/blob/master/User%20manual.pdf"><strong>Know more by user manual »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/COMP5703-CS34/DETS](https://drive.google.com/drive/u/1/folders/1qqmfct1e5gjNQ2mqncCDaFH-SQy96QAf">View Demo</a>
+    <a href="https://drive.google.com/drive/u/1/folders/1qqmfct1e5gjNQ2mqncCDaFH-SQy96QAf">View Demo</a>
     ·
     <a href="https://github.com/COMP5703-CS34/DETS/issues">Report Bug</a>
     ·
